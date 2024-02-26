@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chess!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.sound.min.js"></script>
+
+    <script src="src/utility.js"></script>
+    <script src="src/piece.js"></script>
+    <script src="src/chess.js"></script>
+    <script src="src/sketch.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/main.css" />
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div class="grid">
+      <!-- Chess Game Container -->
+      <div class="container game">
+        <div id="chess" class="main"></div>
+      </div>
+      <!-- Settings Container -->
+      <div class="container settings">
+        <h1>Settings</h1>
+        <ul class="settings-items-list">
+          <li class="settings-item">
+            <span>FEN String</span>
+            <input type="text" name="fen-string" id="fen-string-input" />
+          </li>
+        </ul>
+        <div class="buttons">
+          <button id="save-button" class="save">Save</button>
+        </div>
+      </div>
+      <!-- Timer Container -->
+      <div class="container timer">
+        <h1>Timer</h1>
+        <div class="score">
+          <p>TODO: score</p>
+        </div>
+        <div class="buttons">
+          <button id="start-button" class="start">Start</button>
+          <button id="restart-button" class="restart">Restart</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
