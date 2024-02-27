@@ -50,7 +50,6 @@ function draw() {
   //   chess.initialize(fenString);
   // }
 
-  chess.update();
   chess.render();
 
   // Rendering current selected piece

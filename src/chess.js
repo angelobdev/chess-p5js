@@ -41,8 +41,6 @@ class Chess {
     });
   }
 
-  update() {}
-
   render(selectedPiece) {
     this.drawBoard();
 
@@ -66,7 +64,8 @@ class Chess {
   }
 
   isEmpty(file, rank) {
-    return this.board[file][rank] == null;
+    if (file < 0 || file > 7 || rank < 0 || rank > 7) return true;
+    return this.board[file][rank] === null;
   }
 
   // Rendering
