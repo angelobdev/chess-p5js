@@ -14,13 +14,16 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <div class="grid">
-      <!-- Chess Game Container -->
-      <div class="container game">
-        <div id="chess" class="main"></div>
+    <div class="wrapper">
+      <header>
+        <h1>Chess!</h1>
+      </header>
+      <!-- Chess Game -->
+      <div class="container main">
+        <div id="chess"></div>
       </div>
-      <!-- Settings Container -->
-      <div class="container settings">
+      <!-- Settings -->
+      <aside class="container aside settings">
         <h1>Settings</h1>
         <ul class="settings-items-list">
           <li class="settings-item">
@@ -31,9 +34,9 @@
         <div class="buttons">
           <button id="save-button" class="save">Save</button>
         </div>
-      </div>
-      <!-- Timer Container -->
-      <div class="container timer">
+      </aside>
+      <!-- Timer -->
+      <aside class="container aside timer">
         <h1>Timer</h1>
         <div class="score">
           <p>TODO: score</p>
@@ -42,7 +45,7 @@
           <button id="start-button" class="start">Start</button>
           <button id="restart-button" class="restart">Restart</button>
         </div>
-      </div>
+      </aside>
     </div>
   </body>
 </html>

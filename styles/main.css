@@ -19,29 +19,50 @@ body {
   flex-direction: row;
 }
 
-.grid {
-  width: 90%;
-  height: 90vh;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 1rem;
+.wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  text-align: center;
 }
 
-.game {
-  grid-column: span 2;
-  grid-row: span 2;
+.wrapper > * {
+  flex: 1 100%;
+  padding: 0;
+  margin: 0;
 }
 
-.settings {
-  grid-column: span 1;
-  grid-row: span 1;
+/* Desktop */
+@media (min-width: 800px) {
+  .main {
+    flex: 3;
+    order: 2;
+  }
+  .settings {
+    order: 1;
+  }
+  .timer {
+    order: 3;
+  }
 }
 
-.timer {
-  grid-column: span 1;
-  grid-row: span 1;
+/* Mobile */
+@media (min-width: 600px) {
+  .aside {
+    flex: 1;
+  }
+}
+
+header {
+  position: absolute;
+  top: 0;
+
+  width: 100vw;
+  height: 4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
 }
 
 .container {
@@ -58,6 +79,12 @@ body {
   border-radius: 0.4rem;
   border: 0.5px solid #0005;
   box-shadow: 5px 5px #0002;
+
+  box-sizing: border-box;
+}
+
+#chess {
+  padding: 1rem;
 }
 
 .container > h1 {
@@ -77,11 +104,6 @@ body {
   padding: 0;
   border-radius: 0.4rem 0.4rem 0 0;
   margin: 0 0 1rem 0;
-}
-
-.main {
-  margin-top: auto;
-  margin-bottom: auto;
 }
 
 canvas {

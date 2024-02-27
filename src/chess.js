@@ -1,6 +1,7 @@
-const BOARD_DIMENSION = 600; // TODO: Set based on screen size
 const FILES_RANKS = 8;
-const CELL_DIMENSION = BOARD_DIMENSION / FILES_RANKS;
+let dimMultiplier = 0.5;
+let BOARD_DIMENSION = window.innerWidth * dimMultiplier;
+let CELL_DIMENSION = BOARD_DIMENSION / FILES_RANKS;
 
 const WHITE_COLOR = "#E1BE95";
 const BLACK_COLOR = "#645442";

@@ -41,7 +41,7 @@ function start() {
 }
 
 function draw() {
-  background(255, 0, 255);
+  background(0);
 
   // TODO: fix
   // if (fenString != fenInput.value()) {
@@ -114,4 +114,14 @@ function mouseReleased() {
 
     selectedPiece = null;
   }
+}
+
+function windowResized() {
+  let MIN_DIM = 800;
+  if (window.innerWidth > MIN_DIM)
+    BOARD_DIMENSION = window.innerWidth * dimMultiplier;
+  else BOARD_DIMENSION = MIN_DIM / 2;
+
+  CELL_DIMENSION = BOARD_DIMENSION / FILES_RANKS;
+  resizeCanvas(BOARD_DIMENSION, BOARD_DIMENSION);
 }
