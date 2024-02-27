@@ -5,6 +5,7 @@ let fenInput, fenString;
 
 // Picking variables
 let selectedPiece;
+let selectedPieceMoves;
 let pickFile, pickRank;
 let dragFile, dragRank;
 let dragX, dragY;
@@ -54,17 +55,17 @@ function draw() {
 
   // Rendering current selected piece
   if (selectedPiece != null) {
-    // Drawing current cell overlay
-    fill(
-      chess.getPiece(dragFile, dragRank) == null ? "#00ff0050" : "#ff000050"
-    );
+    selectedPieceMoves.forEach((move) => {
+      // Drawing current cell overlay
+      fill(OVERLAY_COLOR);
 
-    rect(
-      dragFile * CELL_DIMENSION,
-      dragRank * CELL_DIMENSION,
-      CELL_DIMENSION,
-      CELL_DIMENSION
-    );
+      rect(
+        move.moveFile * CELL_DIMENSION,
+        move.moveRank * CELL_DIMENSION,
+        CELL_DIMENSION,
+        CELL_DIMENSION
+      );
+    });
 
     // Drawing possible moves cell overlay
 
@@ -88,8 +89,15 @@ function mousePressed() {
   selectedPiece = chess.getPiece(pickFile, pickRank);
 
   if (selectedPiece != null) {
-    chess.setPiece(pickFile, pickRank, null); // "Hiding" the piece
-    console.log("Selezionato");
+    // "Hiding" the piece
+    chess.setPiece(pickFile, pickRank, null);
+
+    // Calculating possible moves
+    selectedPieceMoves = selectedPiece.calculatePossibleMoves(
+      chess,
+      pickFile,
+      pickRank
+    );
   }
 }
 
@@ -99,8 +107,6 @@ function mouseDragged() {
 
   dragFile = Math.floor((mouseX / BOARD_DIMENSION) * FILES_RANKS);
   dragRank = Math.floor((mouseY / BOARD_DIMENSION) * FILES_RANKS);
-
-  console.log("Sposto");
 }
 
 function mouseReleased() {
@@ -108,9 +114,23 @@ function mouseReleased() {
     let releaseFile = floor((mouseX / BOARD_DIMENSION) * FILES_RANKS);
     let releaseRank = floor((mouseY / BOARD_DIMENSION) * FILES_RANKS);
 
-    if (chess.isEmpty(releaseFile, releaseRank))
+    // Checking if piece can be moved to desired position
+
+    let canMove = false;
+    selectedPieceMoves.forEach(({ moveFile, moveRank }) => {
+      if (moveFile == releaseFile && moveRank == releaseRank) canMove = true;
+    });
+
+    if (canMove) {
+      // Piece can be moved
+      if (!chess.isEmpty(releaseFile, releaseRank)) {
+        // Piece has to eat
+      }
       chess.setPiece(releaseFile, releaseRank, selectedPiece);
-    else chess.setPiece(pickFile, pickRank, selectedPiece);
+      selectedPiece.hasBeenMoved();
+    } else {
+      chess.setPiece(pickFile, pickRank, selectedPiece);
+    }
 
     selectedPiece = null;
   }

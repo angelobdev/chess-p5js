@@ -10,6 +10,8 @@ const DEFAULT_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const ALPHABET_REGEX = /[a-zA-Z]/;
 const NUMBER_REGEX = /[0-9]/;
 
+const OVERLAY_COLOR = "#00ff0020";
+
 class Chess {
   constructor() {
     this.board = new Matrix(8, 8);

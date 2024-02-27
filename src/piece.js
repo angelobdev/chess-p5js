@@ -17,6 +17,8 @@ class Piece {
     this.type = pieceType;
     this.color = pieceColor;
 
+    this.hasMoved = false;
+
     this.texture = loadImage("assets/" + this.color + "_" + this.type + ".png");
   }
 
@@ -28,6 +30,77 @@ class Piece {
   drawFree(x, y) {
     let cellDim = BOARD_DIMENSION / 8;
     image(this.texture, x, y, cellDim, cellDim);
+  }
+
+  calculatePossibleMoves(chess, file, rank) {
+    let moves = [];
+
+    let direction = this.color === PieceColor.black ? 1 : -1;
+
+    switch (this.type) {
+      // PAWN
+      case PieceType.pawn:
+        let span = this.hasMoved ? 1 : 2;
+
+        for (let i = 1; i < span + 1; i++) {
+          let move = {
+            moveFile: file,
+            moveRank: rank + direction * i,
+          };
+          moves.push(move);
+        }
+
+        // TODO: Add eat moves if front left/right diagonal has a piece in it
+        break;
+      // ROOK
+      case PieceType.rook:
+        // Adding horizontal left
+        for (let hl = file - 1; hl >= 0; hl--) {
+          if (!chess.isEmpty(hl, rank)) break;
+          moves.push({ moveFile: hl, moveRank: rank });
+        }
+
+        // Adding horizontal right
+        for (let hr = file + 1; hr < 8; hr++) {
+          if (!chess.isEmpty(hr, rank)) break;
+          moves.push({ moveFile: hr, moveRank: rank });
+        }
+
+        // Adding vertical top
+        for (let vt = rank - 1; vt >= 0; vt--) {
+          if (!chess.isEmpty(file, vt)) break;
+          moves.push({ moveFile: file, moveRank: vt });
+        }
+
+        // Adding vertical bottom
+        for (let vb = rank + 1; vb < 8; vb++) {
+          if (!chess.isEmpty(file, vb)) break;
+          moves.push({ moveFile: file, moveRank: vb });
+        }
+
+        break;
+      // KNIGHT
+      case PieceType.knight:
+        break;
+      // BISHOP
+      case PieceType.bishop:
+        // Main diagonal
+
+        // Inverse diagonal
+        break;
+      // QUEEN
+      case PieceType.queen:
+        break;
+      // KING
+      case PieceType.king:
+        break;
+    }
+
+    return moves;
+  }
+
+  hasBeenMoved() {
+    this.hasMoved = true;
   }
 
   toString() {
