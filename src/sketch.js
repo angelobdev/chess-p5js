@@ -79,6 +79,8 @@ function mousePressed() {
 
   selectedPiece = chess.getPiece(pickFile, pickRank); // Get selected piece
 
+  if (selectedPiece.color !== chess.turn) selectedPiece = null;
+
   if (selectedPiece != null) {
     // Hide the selected piece temporarily
     chess.setPiece(pickFile, pickRank, null);

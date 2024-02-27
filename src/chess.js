@@ -22,6 +22,7 @@ const OVERLAY_COLOR = "#00ff0020";
 class Chess {
   constructor() {
     this.board = new Matrix(8, 8); // Initialize the board as an 8x8 matrix
+    this.turn = PieceColor.white;
   }
 
   // Initialize the board with pieces based on a FEN string
@@ -43,6 +44,9 @@ class Chess {
         }
       } else {
         // TODO: implement later (handling of other FEN information like turn, castling, etc.)
+        if (char === "w" || char === "b") {
+          this.turn = char === "w" ? PieceColor.white : PieceColor.black;
+        }
       }
     });
   }
@@ -112,9 +116,8 @@ class Chess {
       for (let file = 0; file < FILES_RANKS; file++) {
         let piece = this.board[file][rank];
 
-        if (piece != null)
-          board +=
-            piece.toLetter() + " "; // Add piece letter to the board string
+        if (piece != null) board += piece.toLetter() + " ";
+        // Add piece letter to the board string
         else board += "  "; // Add empty space if no piece present
       }
       board += "\n"; // Add new line after each rank
