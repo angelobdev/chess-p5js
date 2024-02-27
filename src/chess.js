@@ -77,6 +77,31 @@ class Chess {
     this.board[file][rank] = piece;
   }
 
+  move(piece, fromFile, fromRank, toFile, toRank) {
+    // Check if the selected piece can be moved to the desired position
+    let canMove = false;
+    piece
+      .calculatePossibleMoves(this, fromFile, fromRank)
+      .forEach(({ moveFile, moveRank }) => {
+        if (moveFile == toFile && moveRank == toRank) canMove = true;
+      });
+
+    if (canMove) {
+      // If the piece can be moved
+      if (!this.isEmpty(toFile, toRank)) {
+        // If there's a piece to be eaten
+        // Implement the logic for piece eating here
+      }
+      this.setPiece(toFile, toRank, piece); // Set the piece to the release position
+      piece.hasBeenMoved(); // Mark the piece as moved
+
+      this.turn =
+        this.turn == PieceColor.white ? PieceColor.black : PieceColor.white;
+    } else {
+      this.setPiece(fromFile, fromRank, piece); // Set the piece back to its original position
+    }
+  }
+
   // Check if a square is empty
   isEmpty(file, rank) {
     if (file < 0 || file > 7 || rank < 0 || rank > 7) return true; // Check if coordinates are within board bounds

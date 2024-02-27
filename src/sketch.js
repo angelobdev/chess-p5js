@@ -107,23 +107,7 @@ function mouseReleased() {
     let releaseFile = floor((mouseX / BOARD_DIMENSION) * FILES_RANKS); // Get release file
     let releaseRank = floor((mouseY / BOARD_DIMENSION) * FILES_RANKS); // Get release rank
 
-    // Check if the selected piece can be moved to the desired position
-    let canMove = false;
-    selectedPieceMoves.forEach(({ moveFile, moveRank }) => {
-      if (moveFile == releaseFile && moveRank == releaseRank) canMove = true;
-    });
-
-    if (canMove) {
-      // If the piece can be moved
-      if (!chess.isEmpty(releaseFile, releaseRank)) {
-        // If there's a piece to be eaten
-        // Implement the logic for piece eating here
-      }
-      chess.setPiece(releaseFile, releaseRank, selectedPiece); // Set the piece to the release position
-      selectedPiece.hasBeenMoved(); // Mark the piece as moved
-    } else {
-      chess.setPiece(pickFile, pickRank, selectedPiece); // Set the piece back to its original position
-    }
+    chess.move(selectedPiece, pickFile, pickRank, releaseFile, releaseRank);
 
     selectedPiece = null; // Reset selected piece
   }
