@@ -45,16 +45,10 @@ export default class Piece {
     // Getting texture file name
     let textureFileName = "assets/" + this._color + "_" + this._type + ".png";
 
-    // TODO: preload all images
-    this._texture = Chess.p.loadImage(
-      textureFileName,
-      () => {
-        console.log("Texture loaded successfully!");
-      },
-      () => {
-        console.log("Failed to load the texture!");
-      }
-    );
+    // Loading textures
+    this._texture = Chess.p.loadImage(textureFileName, null, () => {
+      console.log("Failed to load the texture!");
+    });
 
     this.selected = false;
   }

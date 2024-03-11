@@ -1,15 +1,38 @@
-# chess-p5js
+# Chess P5JS
 
-To install dependencies:
+A simple remake of a great game!
 
-```bash
-bun install
-```
+---
 
-To run:
+## How to run
 
-```bash
-bun run src/main.ts
-```
+1. Install dependencies:
 
-This project was created using `bun init` in bun v1.0.25. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+   ```bash
+   bun install
+   ```
+
+2. Run:
+
+   ```bash
+   bun start
+   ```
+
+Note:  
+Bun is not strictly necessary, but it has been used to build this project... You can use NPM as well!
+
+---
+
+## Contributing
+
+Contributions are welcome! Whether you're interested in fixing bugs, adding new features, or improving documentation, feel free to submit pull requests.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](./LICENSE.md) file for details.
+
+---
+
+Made with ❤ by [angelobdev](https://github.com/angelobdev)
