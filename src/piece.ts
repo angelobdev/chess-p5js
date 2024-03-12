@@ -1,7 +1,9 @@
 import * as p5 from "p5";
 import Chess from "./chess";
-import { OVERLAY_COLOR, TILE_DIMENSION } from "./constants";
-import Move, { calculatePossibleMoves } from "./movement";
+import Move, { calculatePossibleMoves } from "./piece.movement";
+import ChessState from "./chess.state";
+
+// #region Enumerators
 
 export enum PieceColor {
   WHITE = "white",
@@ -17,7 +19,11 @@ export enum PieceType {
   KING = "king",
 }
 
+// #endregion
+
 export default class Piece {
+  // *** FIELDS *** //
+
   // Logic
   private _type: PieceType;
   private _color: PieceColor;
@@ -30,13 +36,16 @@ export default class Piece {
 
   // Rendering
   private _texture: p5.Image;
-  public selected: boolean;
+  private _selected: boolean;
 
-  // *** CONSTRUCTOR ***
+  // *** CONSTRUCTOR *** //
+
   constructor(symbol: string) {
+    // Initializing piece
     this._type = Piece.getPieceTypeFromSymbol(symbol);
     this._color = Piece.getPieceColorFromSymbol(symbol);
 
+    // Initializing piece position
     this._file = 0;
     this._rank = 0;
 
@@ -50,68 +59,72 @@ export default class Piece {
       console.log("Failed to load the texture!");
     });
 
-    this.selected = false;
+    // Initially no piece is selected
+    this._selected = false;
   }
 
-  // *** METHODS ***
+  // *** METHODS *** //
 
+  /**
+   * Draws the piece in the (file, rank) position
+   */
   public render() {
-    if (!this.selected) {
+    if (!this._selected) {
       Chess.p.image(
         this._texture,
-        this._file * TILE_DIMENSION,
-        this._rank * TILE_DIMENSION,
-        TILE_DIMENSION,
-        TILE_DIMENSION
+        this._file * ChessState.TILE_DIMENSION,
+        this._rank * ChessState.TILE_DIMENSION,
+        ChessState.TILE_DIMENSION,
+        ChessState.TILE_DIMENSION
       );
     }
   }
 
+  /**
+   * Draws the piece in the (x, y) position
+   * @param x Horizontal coordinate (from top left) to draw the piece
+   * @param y Vertical coordinate (from top left) to draw the piece
+   */
   public renderFree(x: number, y: number) {
-    if (this.selected) {
+    if (this._selected) {
       // Rendering possible moves
       this._possibleMoves.forEach((move) => {
         // Draw overlay for each possible move
-        Chess.p.fill(OVERLAY_COLOR); // Set overlay color
+        Chess.p.fill(ChessState.OVERLAY_COLOR); // Set overlay color
         Chess.p.rect(
-          move.toFile * TILE_DIMENSION,
-          move.toRank * TILE_DIMENSION,
-          TILE_DIMENSION,
-          TILE_DIMENSION
+          move.toFile * ChessState.TILE_DIMENSION,
+          move.toRank * ChessState.TILE_DIMENSION,
+          ChessState.TILE_DIMENSION,
+          ChessState.TILE_DIMENSION
         ); // Draw overlay rectangle
       });
 
       // Rendering piece
-      Chess.p.image(this._texture, x, y, TILE_DIMENSION, TILE_DIMENSION);
+      Chess.p.image(
+        this._texture,
+        x,
+        y,
+        ChessState.TILE_DIMENSION,
+        ChessState.TILE_DIMENSION
+      );
     }
   }
 
+  /**
+   * Recalculates the possible moves that the piece can make
+   * @param chess
+   */
   public recalculateMoves(chess: Chess) {
     this._possibleMoves = calculatePossibleMoves(chess, this);
   }
 
-  // *** GETTERS AND SETTERS ***
-
-  public get file(): number {
-    return this._file;
-  }
-
-  public get rank(): number {
-    return this._rank;
-  }
-
-  public get color(): PieceColor {
-    return this._color;
-  }
-
-  public get type(): PieceType {
-    return this._type;
-  }
-
-  public get hasMoved() {
-    return this._hasMoved;
-  }
-
+  /**
+   * Tries to move the piece in the specified (file, rank) position.
+   * The success of the operation depends on the possible moves that the piece can make.
+   * @param file
+   * @param rank
+   * @returns
+   */
   public moveTo(file: number, rank: number): boolean {
     if (this.canMoveTo(file, rank)) {
       this.setPosition(file, rank);
@@ -121,6 +134,12 @@ export default class Piece {
     return false;
   }
 
+  /**
+   * Returns true if the piece can be moved to the (file, rank) position
+   * @param file
+   * @param rank
+   * @returns
+   */
   public canMoveTo(file: number, rank: number) {
     if (file === this._file && rank === this._rank) return false;
     for (let i = 0; i < this._possibleMoves.length; i++) {
@@ -132,17 +151,55 @@ export default class Piece {
     return false;
   }
 
-  public setPosition(file: number, rank: number) {
-    this._file = file;
-    this._rank = rank;
-  }
-
+  /**
+   * Returns true if the piece is placed in the (file, rank) position
+   * @param file
+   * @param rank
+   * @returns
+   */
   public isPlacedAt(file: number, rank: number) {
     if (this._file === file && this._rank === rank) return true;
     return false;
   }
 
-  // *** UTILITIES ***
+  // *** GETTERS *** //
+
+  public get color(): PieceColor {
+    return this._color;
+  }
+
+  public get type(): PieceType {
+    return this._type;
+  }
+
+  public get file(): number {
+    return this._file;
+  }
+
+  public get rank(): number {
+    return this._rank;
+  }
+
+  public get selected(): boolean {
+    return this._selected;
+  }
+
+  public get hasMoved(): boolean {
+    return this._hasMoved;
+  }
+
+  // *** SETTERS *** //
+
+  public set selected(selected: boolean) {
+    this._selected = selected;
+  }
+
+  public setPosition(file: number, rank: number) {
+    this._file = file;
+    this._rank = rank;
+  }
+
+  // *** UTILITIES *** //
 
   private static getPieceTypeFromSymbol(symbol: string): PieceType {
     switch (symbol.toLowerCase()) {
