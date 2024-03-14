@@ -3,6 +3,7 @@ import Chess from "./chess";
 import { OVERLAY_COLOR, TILE_DIMENSION } from "./constants";
 import Move, { calculatePossibleMoves } from "./movement";
 
+
 export enum PieceColor {
   WHITE = "white",
   BLACK = "black",
@@ -55,15 +56,27 @@ export default class Piece {
 
   // *** METHODS ***
 
-  public render() {
+  public render(turn: PieceColor, kingUnderCheck: boolean) {
+    // Render the piece's texture
     if (!this.selected) {
-      Chess.p.image(
-        this._texture,
-        this._file * TILE_DIMENSION,
-        this._rank * TILE_DIMENSION,
-        TILE_DIMENSION,
-        TILE_DIMENSION
-      );
+        Chess.p.image(
+            this._texture,
+            this._file * TILE_DIMENSION,
+            this._rank * TILE_DIMENSION,
+            TILE_DIMENSION,
+            TILE_DIMENSION
+        );
+    }
+
+    // Highlight the square of the king if it's under check
+    if (this._type === PieceType.KING && this._color === turn && kingUnderCheck) {
+        Chess.p.fill("#ff000080"); // Red with 50% opacity
+        Chess.p.rect(
+            this._file * TILE_DIMENSION,
+            this._rank * TILE_DIMENSION,
+            TILE_DIMENSION,
+            TILE_DIMENSION
+        );
     }
   }
 

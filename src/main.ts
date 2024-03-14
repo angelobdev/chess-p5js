@@ -18,6 +18,8 @@ export const sketch = (p: p5) => {
   // FEN String tracker
   let fenString: string;
 
+  const BORDER_MARGIN = 10;
+
   p.setup = () => {
     // Creating Canvas
     p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -54,20 +56,21 @@ export const sketch = (p: p5) => {
 
   p.mousePressed = (event) => {
     let file = Math.floor((p.mouseX / p.width) * FILES_RANKS);
-    let rank = Math.floor((p.mouseY / p.width) * FILES_RANKS);
+    let rank = Math.floor((p.mouseY / p.height) * FILES_RANKS);
 
-    if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-      chess.pick(file, rank);
-
-      dragOffsetX = file * TILE_DIMENSION - p.mouseX;
-      dragOffsetY = rank * TILE_DIMENSION - p.mouseY;
-
-      chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+    // Verifica se il file e il rank sono validi
+    if (file >= 0 && file < FILES_RANKS && rank >= 0 && rank < FILES_RANKS) {
+      // Verifica se c'è un pezzo alla posizione selezionata
+      let pieceAtPosition = chess.getPieceAt(file, rank);
+      if (pieceAtPosition != null) {
+        // Se c'è un pezzo e se è il turno del giocatore corretto, esegui il metodo pick
+        if (pieceAtPosition.color === chess.getTurn()) {
+          chess.pick(file, rank);
+          dragOffsetX = file * TILE_DIMENSION - p.mouseX;
+          dragOffsetY = rank * TILE_DIMENSION - p.mouseY;
+        }
+      }
     }
-  };
-
-  p.mouseDragged = (event) => {
-    chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
   };
 
   p.mouseReleased = (event) => {
@@ -75,6 +78,20 @@ export const sketch = (p: p5) => {
     let rank = Math.floor((p.mouseY / p.width) * FILES_RANKS);
     chess.release(file, rank);
   };
+
+  p.mouseDragged = () => {
+    let selectedPiece = chess.getSelectedPiece();
+    if (selectedPiece != null) {
+      let x = p.mouseX + dragOffsetX;
+      let y = p.mouseY + dragOffsetY;
+
+      // Assicurati che la posizione del pezzo trascinato sia all'interno dei limiti della scacchiera con un margine ridotto
+      if (x >= -BORDER_MARGIN && y >= -BORDER_MARGIN && x + TILE_DIMENSION <= CANVAS_WIDTH + BORDER_MARGIN && y + TILE_DIMENSION <= CANVAS_HEIGHT + BORDER_MARGIN) {
+        chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+      }
+    }
+  };
+
 
   // p.windowResized(event) => {
   //   let newDimension = 0;

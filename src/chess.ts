@@ -1,5 +1,7 @@
 import { FILES_RANKS, TILE_DIMENSION } from "./constants";
-import Piece, { PieceColor } from "./piece";
+import Move, { calculatePossibleMoves } from "./movement";
+import Piece, { PieceColor, PieceType } from "./piece";
+
 
 export default class Chess {
   // *** FIELDS ***
@@ -57,28 +59,33 @@ export default class Chess {
   render() {
     // Rendering board
     for (let file = 0; file < FILES_RANKS; file++) {
-      for (let rank = 0; rank < FILES_RANKS; rank++) {
-        Chess.p.noStroke();
-        Chess.p.fill((file + rank) % 2 == 0 ? "#E1BE95" : "#645442");
-        Chess.p.rect(
-          file * TILE_DIMENSION,
-          rank * TILE_DIMENSION,
-          TILE_DIMENSION,
-          TILE_DIMENSION
-        );
-      }
+        for (let rank = 0; rank < FILES_RANKS; rank++) {
+            Chess.p.noStroke();
+            Chess.p.fill((file + rank) % 2 == 0 ? "#E1BE95" : "#645442");
+            Chess.p.rect(
+                file * TILE_DIMENSION,
+                rank * TILE_DIMENSION,
+                TILE_DIMENSION,
+                TILE_DIMENSION
+            );
+        }
     }
+
+    // Get current turn and check if the king is under check
+    let turn = this.getTurn();
+    let kingUnderCheck = this.isKingUnderCheck(turn);
 
     // Rendering pieces
     this.pieces.forEach((piece) => {
-      piece.render();
+        piece.render(turn, kingUnderCheck);
     });
 
     // Rendering drag piece
     if (this.selectedPiece != null) {
-      this.selectedPiece.renderFree(this.dragX, this.dragY);
+        this.selectedPiece.renderFree(this.dragX, this.dragY);
     }
   }
+
 
   pick(file: number, rank: number) {
     // console.log("Picking at %d %d", file, rank);
@@ -129,6 +136,39 @@ export default class Chess {
 
   // *** UTILITIES ***
 
+    /**
+   * Checks if the king of the specified color is under check.
+   * @param color The color of the king to check.
+   * @returns True if the king is under check, false otherwise.
+   */
+  public isKingUnderCheck(color: PieceColor): boolean {
+    // Find the position of the king of the specified color
+    let king = this.pieces.find(piece => piece.type === PieceType.KING && piece.color === color);
+
+    if (king) {
+        // Iterate through all pieces of the opposite color
+        for (let piece of this.pieces) {
+            if (piece.color !== color) {
+                // Calculate possible moves for the current piece
+                let possibleMoves = calculatePossibleMoves(this, piece);
+
+                // Check if any of the possible moves hits the king
+                for (let move of possibleMoves) {
+                    if (move.toFile === king.file && move.toRank === king.rank) {
+                        // The king is under check
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    // The king is not under check
+    return false;
+  }
+
+  // Get Functions
+
   getPieceAt(file: number, rank: number): Piece {
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
@@ -139,5 +179,13 @@ export default class Chess {
     }
 
     return null;
+  }
+
+  public getSelectedPiece(): Piece {
+    return this.selectedPiece;
+  }
+
+  public getTurn(): PieceColor {
+    return this.turn;
   }
 }
