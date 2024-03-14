@@ -23,37 +23,15 @@ export default class Chess {
     // Initializing Pieces Array
     this._pieces = new Array<Piece>();
 
-    // Parsing FEN String
-    let index = 0;
-    for (let ci = 0; ci < fen.length; ci++) {
-      let symbol = fen.charAt(ci);
-
-      if (index < 64) {
-        // Placing pieces
-        let file = index % ChessState.FILES_RANKS;
-        let rank = Math.floor(index / ChessState.FILES_RANKS);
-
-        if (symbol.match("[a-zA-Z]")) {
-          let piece = new Piece(symbol);
-          piece.setPosition(file, rank);
-
-          this._pieces.push(piece);
-          index++;
-        } else if (symbol.match("[0-9]")) {
-          index += Number(symbol);
-        } else {
-          // TODO: implement
-        }
-      }
-      // Settings
-      else {
-        this._turn = PieceColor.WHITE; // TODO: implement into parser
-      }
-    }
+    // Parsing FEN string
+    this.parseFen(fen);
   }
 
   // *** METHODS *** //
 
+  /**
+   * Renders board and pieces
+   */
   render() {
     // Rendering board
     for (let file = 0; file < ChessState.FILES_RANKS; file++) {
@@ -80,6 +58,11 @@ export default class Chess {
     }
   }
 
+  /**
+   * Callback that selects (if possible) the piece in the [file, rank] position
+   * @param file
+   * @param rank
+   */
   pick(file: number, rank: number) {
     // console.log("Picking at %d %d", file, rank);
     this._selectedPiece = this.getPieceAt(file, rank);
@@ -93,6 +76,13 @@ export default class Chess {
     }
   }
 
+  /**
+   * Callback that draws the selected piece in the specified coordinates
+   * @param x
+   * @param y
+   * @param pickOffsetX
+   * @param pickOffsetY
+   */
   drag(x: number, y: number, pickOffsetX: number, pickOffsetY: number) {
     // console.log("Dragging at %f %f", x, y);
     if (this._selectedPiece != null) {
@@ -101,6 +91,11 @@ export default class Chess {
     }
   }
 
+  /**
+   * Callback that releases the piece in the specified [file, rank] position (if possible)
+   * @param file
+   * @param rank
+   */
   release(file: number, rank: number) {
     // console.log("Releasing at %d %d", file, rank);
 
@@ -127,17 +122,49 @@ export default class Chess {
     }
   }
 
-  // *** UTILITIES *** //
+  // *** GETTERS *** //
 
-  getPieceAt(file: number, rank: number): Piece {
+  public getPieceAt(file: number, rank: number): Piece {
     for (let i = 0; i < this._pieces.length; i++) {
       const piece = this._pieces[i];
+      if (piece.isPlacedAt(file, rank)) return piece;
+    }
+    return null;
+  }
 
-      if (piece.isPlacedAt(file, rank)) {
-        return piece;
+  // *** UTILITIES *** //
+
+  private parseFen(fen: string) {
+    // Example FEN:
+    // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+    // Parsing FEN String
+    let index = 0;
+    for (let ci = 0; ci < fen.length; ci++) {
+      let symbol = fen.charAt(ci);
+
+      if (index < 64) {
+        // Placing pieces
+        let file = index % ChessState.FILES_RANKS;
+        let rank = Math.floor(index / ChessState.FILES_RANKS);
+
+        if (symbol.match("[a-zA-Z]")) {
+          // Selecting piece based on symbol (letter)
+          let piece = new Piece(symbol);
+          piece.setPosition(file, rank);
+
+          this._pieces.push(piece);
+          index++;
+        } else if (symbol.match("[0-9]")) {
+          // Skipping 'n' places
+          index += Number(symbol);
+        } else {
+          // TODO: implement
+        }
+      } else {
+        // Applying settings
+        this._turn = PieceColor.WHITE; // TODO: implement into parser
       }
     }
-
-    return null;
   }
 }
