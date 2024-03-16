@@ -123,7 +123,7 @@ export default class Chess {
         });
 
         // Eating
-        if (pieceAtReleaseSpot.color === PieceColor.WHITE) {
+        if (this._selectedPiece.color === PieceColor.WHITE) {
           this._piecesEatenByWhite.push(pieceAtReleaseSpot);
         } else {
           this._piecesEatenByBlack.push(pieceAtReleaseSpot);
