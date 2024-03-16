@@ -45,6 +45,7 @@ export default class Piece {
     // Initializing piece
     this._type = Piece.getPieceTypeFromSymbol(symbol);
     this._color = Piece.getPieceColorFromSymbol(symbol);
+    this._value = Piece.getPieceValueFromSymbol(symbol);
 
     // Initializing piece position
     this._file = 0;
@@ -248,5 +249,11 @@ export default class Piece {
       default:
         throw new Error("Invalid symbol: " + symbol);
     }
+  }
+
+  // *** DEBUG FUNCTIONS *** //
+
+  public toString(): string {
+    return this._color.toString() + " " + this._type.toString();
   }
 }
