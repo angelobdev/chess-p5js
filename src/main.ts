@@ -1,6 +1,7 @@
 import * as p5 from "p5";
 import Chess from "./chess";
 import ChessState from "./chess.state";
+import { PieceColor } from "./piece";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
@@ -12,9 +13,11 @@ export const sketch = (p: p5) => {
   let dragOffsetX: number;
   let dragOffsetY: number;
 
-  // Score Textes
+  // Round summary textes
+  let turnText: HTMLParagraphElement;
   let whiteScore: HTMLParagraphElement;
   let blackScore: HTMLParagraphElement;
+  let restartButton: HTMLButtonElement;
 
   // *** P5 Functions *** //
 
@@ -23,7 +26,7 @@ export const sketch = (p: p5) => {
     p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
     p.windowResized();
 
-    initialize(); // Initializes the HTML elements
+    initializeHTMLElements();
     start(); // Start the game
   };
 
@@ -55,7 +58,7 @@ export const sketch = (p: p5) => {
     let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
     chess.release(file, rank);
 
-    updateScores();
+    updateHTMLElements();
   };
 
   p.windowResized = (event) => {
@@ -65,23 +68,34 @@ export const sketch = (p: p5) => {
 
   // *** UTILITIES *** //
 
-  function initialize() {
+  function initializeHTMLElements() {
+    // Turn text
+    turnText = document.getElementById("turn") as HTMLParagraphElement;
+
     // Score Elements
     whiteScore = document.getElementById("white-score") as HTMLParagraphElement;
     whiteScore.textContent = "0";
 
     blackScore = document.getElementById("black-score") as HTMLParagraphElement;
     blackScore.textContent = "0";
+
+    // Restart Button
+    restartButton = document.getElementById("restart") as HTMLButtonElement;
+    restartButton.onclick = () => {
+      start();
+    };
+  }
+
+  function updateHTMLElements() {
+    turnText.textContent = chess.turn === PieceColor.WHITE ? "White" : "Black";
+
+    whiteScore.textContent = chess.whiteScore.toString();
+    blackScore.textContent = chess.blackScore.toString();
   }
 
   function start() {
-    // Creating Chess object
     chess = new Chess(p, ChessState.DEFAULT_FEN);
-  }
-
-  function updateScores() {
-    whiteScore.textContent = chess.whiteScore.toString();
-    blackScore.textContent = chess.blackScore.toString();
+    updateHTMLElements();
   }
 };
 

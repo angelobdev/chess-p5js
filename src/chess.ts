@@ -12,8 +12,8 @@ export default class Chess {
   private _piecesEatenByWhite: Array<Piece>;
   private _piecesEatenByBlack: Array<Piece>;
 
-  private _dragX: number = 0;
-  private _dragY: number = 0;
+  private _dragX: number;
+  private _dragY: number;
 
   private _turn: PieceColor;
 
@@ -29,6 +29,11 @@ export default class Chess {
 
     this._piecesEatenByWhite = new Array<Piece>();
     this._piecesEatenByBlack = new Array<Piece>();
+
+    this._dragX = 0;
+    this._dragY = 0;
+
+    this._turn = PieceColor.WHITE;
 
     // Parsing FEN string
     this.parseFen(fen);
@@ -140,6 +145,10 @@ export default class Chess {
   }
 
   // *** GETTERS *** //
+
+  public get turn(): PieceColor {
+    return this._turn;
+  }
 
   public get whiteScore(): number {
     return Chess.calculateScore(this._piecesEatenByWhite);
