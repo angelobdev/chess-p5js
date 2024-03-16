@@ -19,6 +19,7 @@ export const sketch = (p: p5) => {
   let turnText: HTMLParagraphElement;
   let whiteScore: HTMLParagraphElement;
   let blackScore: HTMLParagraphElement;
+  let opponentSelect: HTMLSelectElement;
   let restartButton: HTMLButtonElement;
 
   // *** P5 Functions *** //
@@ -72,6 +73,14 @@ export const sketch = (p: p5) => {
   // *** UTILITIES *** //
 
   function initializeHTMLElements() {
+    // Opponent chooser
+    opponentSelect = document.getElementById(
+      "opponent-chooser"
+    ) as HTMLSelectElement;
+    opponentSelect.onchange = () => {
+      initializeChessAI();
+    };
+
     // Turn text
     turnText = document.getElementById("turn") as HTMLParagraphElement;
 
@@ -99,15 +108,21 @@ export const sketch = (p: p5) => {
   function initializeGame() {
     chess = new Chess(p, ChessState.DEFAULT_FEN);
 
-    // Initializing AI
-    let chessAIColor =
-      chess.turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-
-    // TODO: Add pick menu
-    // NOTE: Set chessAI to null to let a second person play
-    chessAI = new RandomChessAI(chess, chessAIColor);
-
     updateHTMLElements();
+    initializeChessAI();
+  }
+
+  function initializeChessAI() {
+    switch (opponentSelect.value) {
+      case "second-player":
+        chessAI = null;
+        break;
+      case "random-AI":
+        chessAI = new RandomChessAI(chess, chess.opponentColor);
+        break;
+      default:
+        throw new Error("Invalid Opponent selected!");
+    }
   }
 };
 

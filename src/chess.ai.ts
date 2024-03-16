@@ -21,7 +21,6 @@ export abstract class IChessAI {
     if (this._chess.turn === this._playerColor) {
       // AI makes move
       let move = this.generateNextMove();
-      console.log("Making move...");
       move.piece.moveTo(move.file, move.rank);
       this._chess.nextTurn();
     }
@@ -42,24 +41,19 @@ export class RandomChessAI extends IChessAI {
       );
     });
 
-    let randomIndex = Math.floor(Math.random() * (sameColorPieces.length + 1));
+    let randomIndex = Math.floor(Math.random() * sameColorPieces.length);
     return sameColorPieces.at(randomIndex);
   }
 
   pickRandomMove(piece: Piece): Move {
     let moves = piece.getPossibleMoves(this._chess);
-    console.log("Possible moves: " + moves.length);
-
-    let randomIndex = Math.floor(Math.random() * (moves.length + 1));
+    let randomIndex = Math.floor(Math.random() * moves.length);
     return moves.at(randomIndex);
   }
 
   generateNextMove(): ChessAIMove {
     let piece = this.pickRandomMovablePiece();
-    console.log("Piece: " + piece.toString());
-
     let move = this.pickRandomMove(piece);
-    console.log("Move: " + move);
 
     return {
       piece: piece,

@@ -16,6 +16,7 @@ export default class Chess {
   private _dragY: number;
 
   private _turn: PieceColor;
+  private _firstTurn: PieceColor;
 
   // *** CONSTRUCTOR *** //
 
@@ -34,6 +35,7 @@ export default class Chess {
     this._dragY = 0;
 
     this._turn = PieceColor.WHITE;
+    this._firstTurn = this._turn;
 
     // Parsing FEN string
     this.parseFen(fen);
@@ -152,6 +154,16 @@ export default class Chess {
 
   public get turn(): PieceColor {
     return this._turn;
+  }
+
+  public get playerColor(): PieceColor {
+    return this._firstTurn;
+  }
+
+  public get opponentColor(): PieceColor {
+    return this._firstTurn === PieceColor.WHITE
+      ? PieceColor.BLACK
+      : PieceColor.WHITE;
   }
 
   public get whiteScore(): number {
