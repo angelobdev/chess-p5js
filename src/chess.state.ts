@@ -9,8 +9,8 @@ export default class ChessState {
 
   public static OVERLAY_COLOR = "#00ff0020"; // Overlay color displayed on possible moves (tiles) of the selected piece
 
-  public static windowResizeCallback(screenWidth: number) {
-    ChessState.BOARD_DIMENSION = screenWidth * 0.48; // The 0.48 value refers to the CSS values of the containers (80vh * 60%)
+  public static windowResizeCallback(newSize: number) {
+    ChessState.BOARD_DIMENSION = newSize; // The 0.48 value refers to the CSS values of the containers (80vh * 60%)
     ChessState.TILE_DIMENSION =
       ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS;
   }
