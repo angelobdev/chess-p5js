@@ -74,10 +74,13 @@ export default class Chess {
     // console.log("Picking at %d %d", file, rank);
     this._selectedPiece = this.getPieceAt(file, rank);
 
-    if (this._selectedPiece.color != this._turn) this._selectedPiece = null;
-
     // console.log("Picked " + this.selectedPiece);
     if (this._selectedPiece != null) {
+      if (this._selectedPiece.color != this._turn) {
+        this._selectedPiece = null;
+        return;
+      }
+
       this._selectedPiece.selected = true;
       this._selectedPiece.recalculateMoves(this);
     }

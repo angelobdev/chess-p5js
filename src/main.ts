@@ -20,6 +20,8 @@ export const sketch = (p: p5) => {
     // Creating Canvas
     p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
 
+    p.windowResized();
+
     setupControlPanel();
     start(); // Initializes the chess object
   };
@@ -54,17 +56,7 @@ export const sketch = (p: p5) => {
   };
 
   p.windowResized = (event) => {
-    // TODO: Rethink
-
-    let MIN_DIM = 800;
-
-    if (window.innerWidth > MIN_DIM)
-      ChessState.BOARD_DIMENSION = window.innerWidth * 0.6;
-    else ChessState.BOARD_DIMENSION = MIN_DIM / 2;
-
-    ChessState.TILE_DIMENSION =
-      ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS;
-
+    ChessState.windowResizeCallback(window.innerWidth);
     p.resizeCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
   };
 
@@ -75,23 +67,23 @@ export const sketch = (p: p5) => {
     chess = new Chess(p, ChessState.DEFAULT_FEN);
   }
 
+  function updateScores() {}
+
   function setupControlPanel() {
-    // Control Panel
-    let fenInput = document.getElementById(
-      "fen-string-input"
-    ) as HTMLInputElement;
-
-    fenInput.value = ChessState.DEFAULT_FEN; // Set default FEN value
-    fenInput.onchange = function () {
-      fenString = fenInput.value; // Update fenString when input changes
-      start(); // Restart the game with the new FEN string
-    };
-    fenString = fenInput.value; // Initialize fenString with default value
-
-    let fenButton = document.getElementById("restart-button"); // Get restart button element
-    fenButton.onclick = function () {
-      start(); // Restart the game when the button is clicked
-    };
+    // // Control Panel
+    // let fenInput = document.getElementById(
+    //   "fen-string-input"
+    // ) as HTMLInputElement;
+    // fenInput.value = ChessState.DEFAULT_FEN; // Set default FEN value
+    // fenInput.onchange = function () {
+    //   fenString = fenInput.value; // Update fenString when input changes
+    //   start(); // Restart the game with the new FEN string
+    // };
+    // fenString = fenInput.value; // Initialize fenString with default value
+    // let fenButton = document.getElementById("restart-button"); // Get restart button element
+    // fenButton.onclick = function () {
+    //   start(); // Restart the game when the button is clicked
+    // };
   }
 };
 
