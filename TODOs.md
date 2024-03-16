@@ -6,10 +6,10 @@ If you want to collaborate to the project please refer to this list.
 
 ## Features
 
-- Piece capturing
-- Piece values
+- Piece values ✅
+- Piece capturing ✅
 - Winning recognition
-- Score
+- Score ✅
 - Customizable Timer
 - Full FEN parser
 

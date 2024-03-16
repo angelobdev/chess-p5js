@@ -7,7 +7,10 @@ export default class Chess {
   public static p: p5;
 
   private _pieces: Array<Piece>;
-  private _selectedPiece: Piece = null;
+  private _selectedPiece: Piece;
+
+  private _piecesEatenByWhite: Array<Piece>;
+  private _piecesEatenByBlack: Array<Piece>;
 
   private _dragX: number = 0;
   private _dragY: number = 0;
@@ -20,8 +23,12 @@ export default class Chess {
     // Initializing P5
     Chess.p = p;
 
-    // Initializing Pieces Array
+    // Initializing Fields
     this._pieces = new Array<Piece>();
+    this._selectedPiece = null;
+
+    this._piecesEatenByWhite = new Array<Piece>();
+    this._piecesEatenByBlack = new Array<Piece>();
 
     // Parsing FEN string
     this.parseFen(fen);
@@ -111,6 +118,13 @@ export default class Chess {
         this._pieces = this._pieces.filter((piece) => {
           return piece != pieceAtReleaseSpot;
         });
+
+        // Eating
+        if (pieceAtReleaseSpot.color === PieceColor.WHITE) {
+          this._piecesEatenByWhite.push(pieceAtReleaseSpot);
+        } else {
+          this._piecesEatenByBlack.push(pieceAtReleaseSpot);
+        }
       }
 
       if (this._selectedPiece.moveTo(file, rank)) {
@@ -124,6 +138,14 @@ export default class Chess {
 
   // *** GETTERS *** //
 
+  public get whiteScore(): number {
+    return Chess.calculateScore(this._piecesEatenByWhite);
+  }
+
+  public get blackScore(): number {
+    return Chess.calculateScore(this._piecesEatenByBlack);
+  }
+
   public getPieceAt(file: number, rank: number): Piece {
     for (let i = 0; i < this._pieces.length; i++) {
       const piece = this._pieces[i];
@@ -133,6 +155,14 @@ export default class Chess {
   }
 
   // *** UTILITIES *** //
+
+  private static calculateScore(eatenPieces: Array<Piece>): number {
+    let score: number = 0;
+    eatenPieces.forEach((piece) => {
+      score += piece.value;
+    });
+    return score;
+  }
 
   private parseFen(fen: string) {
     // Example FEN:
