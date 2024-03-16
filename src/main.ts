@@ -1,20 +1,26 @@
 import * as p5 from "p5";
 import Chess from "./chess";
 import ChessState from "./chess.state";
+import Piece, { PieceColor } from "./piece";
+import { IChessAI, RandomChessAI } from "./chess.ai";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
 
   // Main Chess Object
   let chess: Chess;
+  let chessAI: IChessAI;
 
   // Mouse offset to render selected piece relative to where it has been picked
   let dragOffsetX: number;
   let dragOffsetY: number;
 
-  // Score Textes
+  // Round summary textes
+  let turnText: HTMLParagraphElement;
   let whiteScore: HTMLParagraphElement;
   let blackScore: HTMLParagraphElement;
+  let opponentSelect: HTMLSelectElement;
+  let restartButton: HTMLButtonElement;
 
   // *** P5 Functions *** //
 
@@ -23,12 +29,13 @@ export const sketch = (p: p5) => {
     p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
     p.windowResized();
 
-    initialize(); // Initializes the HTML elements
-    start(); // Start the game
+    initializeHTMLElements();
+    initializeGame(); // Start the game
   };
 
   p.draw = () => {
     p.background(0);
+    if (chessAI != null) chessAI.update();
     chess.render();
   };
 
@@ -55,7 +62,7 @@ export const sketch = (p: p5) => {
     let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
     chess.release(file, rank);
 
-    updateScores();
+    updateHTMLElements();
   };
 
   p.windowResized = (event) => {
@@ -65,23 +72,57 @@ export const sketch = (p: p5) => {
 
   // *** UTILITIES *** //
 
-  function initialize() {
+  function initializeHTMLElements() {
+    // Opponent chooser
+    opponentSelect = document.getElementById(
+      "opponent-chooser"
+    ) as HTMLSelectElement;
+    opponentSelect.onchange = () => {
+      initializeChessAI();
+    };
+
+    // Turn text
+    turnText = document.getElementById("turn") as HTMLParagraphElement;
+
     // Score Elements
     whiteScore = document.getElementById("white-score") as HTMLParagraphElement;
     whiteScore.textContent = "0";
 
     blackScore = document.getElementById("black-score") as HTMLParagraphElement;
     blackScore.textContent = "0";
+
+    // Restart Button
+    restartButton = document.getElementById("restart") as HTMLButtonElement;
+    restartButton.onclick = () => {
+      initializeGame();
+    };
   }
 
-  function start() {
-    // Creating Chess object
-    chess = new Chess(p, ChessState.DEFAULT_FEN);
-  }
+  function updateHTMLElements() {
+    turnText.textContent = chess.turn === PieceColor.WHITE ? "White" : "Black";
 
-  function updateScores() {
     whiteScore.textContent = chess.whiteScore.toString();
     blackScore.textContent = chess.blackScore.toString();
+  }
+
+  function initializeGame() {
+    chess = new Chess(p, ChessState.DEFAULT_FEN);
+
+    updateHTMLElements();
+    initializeChessAI();
+  }
+
+  function initializeChessAI() {
+    switch (opponentSelect.value) {
+      case "second-player":
+        chessAI = null;
+        break;
+      case "random-AI":
+        chessAI = new RandomChessAI(chess, chess.opponentColor);
+        break;
+      default:
+        throw new Error("Invalid Opponent selected!");
+    }
   }
 };
 

@@ -12,10 +12,11 @@ export default class Chess {
   private _piecesEatenByWhite: Array<Piece>;
   private _piecesEatenByBlack: Array<Piece>;
 
-  private _dragX: number = 0;
-  private _dragY: number = 0;
+  private _dragX: number;
+  private _dragY: number;
 
   private _turn: PieceColor;
+  private _firstTurn: PieceColor;
 
   // *** CONSTRUCTOR *** //
 
@@ -29,6 +30,12 @@ export default class Chess {
 
     this._piecesEatenByWhite = new Array<Piece>();
     this._piecesEatenByBlack = new Array<Piece>();
+
+    this._dragX = 0;
+    this._dragY = 0;
+
+    this._turn = PieceColor.WHITE;
+    this._firstTurn = this._turn;
 
     // Parsing FEN string
     this.parseFen(fen);
@@ -141,6 +148,24 @@ export default class Chess {
 
   // *** GETTERS *** //
 
+  public get pieces(): Array<Piece> {
+    return this._pieces;
+  }
+
+  public get turn(): PieceColor {
+    return this._turn;
+  }
+
+  public get playerColor(): PieceColor {
+    return this._firstTurn;
+  }
+
+  public get opponentColor(): PieceColor {
+    return this._firstTurn === PieceColor.WHITE
+      ? PieceColor.BLACK
+      : PieceColor.WHITE;
+  }
+
   public get whiteScore(): number {
     return Chess.calculateScore(this._piecesEatenByWhite);
   }
@@ -155,6 +180,13 @@ export default class Chess {
       if (piece.isPlacedAt(file, rank)) return piece;
     }
     return null;
+  }
+
+  // *** SETTERS *** //
+
+  public nextTurn() {
+    this._turn =
+      this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
   }
 
   // *** UTILITIES *** //

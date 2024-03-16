@@ -194,6 +194,11 @@ export default class Piece {
     return this._hasMoved;
   }
 
+  public getPossibleMoves(chess: Chess) {
+    this.recalculateMoves(chess);
+    return this._possibleMoves;
+  }
+
   // *** SETTERS *** //
 
   public set selected(selected: boolean) {

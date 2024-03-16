@@ -18,6 +18,18 @@
         <!-- Summary -->
         <div class="container panel">
           <h1>Round Summary</h1>
+          <span>
+            Opponent:
+            <select id="opponent-chooser" name="opponent">
+              <option value="second-player">Second Player</option>
+              <option value="random-AI">Random AI</option>
+            </select>
+          </span>
+          <hr class="rounded" />
+          <span>
+            Turn:
+            <p id="turn">White</p>
+          </span>
           <span
             >White Score:
             <p id="white-score">0</p></span
@@ -27,7 +39,11 @@
             <p id="black-score">0</p></span
           >
           <div class="buttons">
-            <button class="button" style="background-color: lightgreen">
+            <button
+              id="restart"
+              class="button"
+              style="background-color: lightgreen"
+            >
               Restart
             </button>
           </div>
