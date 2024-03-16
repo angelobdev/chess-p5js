@@ -27,6 +27,7 @@ export default class Piece {
   // Logic
   private _type: PieceType;
   private _color: PieceColor;
+  private _value: number;
 
   private _file: number;
   private _rank: number;
@@ -44,6 +45,7 @@ export default class Piece {
     // Initializing piece
     this._type = Piece.getPieceTypeFromSymbol(symbol);
     this._color = Piece.getPieceColorFromSymbol(symbol);
+    this._value = Piece.getPieceValueFromSymbol(symbol);
 
     // Initializing piece position
     this._file = 0;
@@ -172,6 +174,10 @@ export default class Piece {
     return this._type;
   }
 
+  public get value(): number {
+    return this._value;
+  }
+
   public get file(): number {
     return this._file;
   }
@@ -224,5 +230,30 @@ export default class Piece {
     return symbol === symbol.toUpperCase()
       ? PieceColor.WHITE
       : PieceColor.BLACK;
+  }
+
+  private static getPieceValueFromSymbol(symbol: string): number {
+    switch (symbol.toLowerCase()) {
+      case "p":
+        return 1;
+      case "r":
+        return 5;
+      case "n":
+        return 3;
+      case "b":
+        return 3;
+      case "q":
+        return 9;
+      case "k":
+        return 1000;
+      default:
+        throw new Error("Invalid symbol: " + symbol);
+    }
+  }
+
+  // *** DEBUG FUNCTIONS *** //
+
+  public toString(): string {
+    return this._color.toString() + " " + this._type.toString();
   }
 }
