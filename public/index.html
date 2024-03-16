@@ -14,28 +14,27 @@
       <div class="container main">
         <div id="chess"></div>
       </div>
-      <!-- Settings -->
-      <aside class="container aside settings">
-        <h1>Settings</h1>
-        <ul class="settings-items-list">
-          <li class="settings-item">
-            <span>FEN String</span>
-            <input type="text" name="fen-string" id="fen-string-input" />
-          </li>
-        </ul>
-        <div class="buttons">
-          <button id="save-button" class="save">Save</button>
+      <aside class="aside">
+        <!-- Summary -->
+        <div class="container panel">
+          <h1>Round Summary</h1>
+          <span
+            >White Score:
+            <p id="white-score">0</p></span
+          >
+          <span
+            >Black Score:
+            <p id="black-score">0</p></span
+          >
+          <div class="buttons">
+            <button class="button" style="background-color: lightgreen">
+              Restart
+            </button>
+          </div>
         </div>
-      </aside>
-      <!-- Timer -->
-      <aside class="container aside timer">
-        <h1>Timer</h1>
-        <div class="score">
-          <p>TODO: score</p>
-        </div>
-        <div class="buttons">
-          <button id="start-button" class="start">Start</button>
-          <button id="restart-button" class="restart">Restart</button>
+        <!-- Timer -->
+        <div class="container panel">
+          <h1>Timer</h1>
         </div>
       </aside>
     </div>

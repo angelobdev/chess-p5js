@@ -5,23 +5,26 @@ import ChessState from "./chess.state";
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
 
+  // Main Chess Object
   let chess: Chess;
 
   // Mouse offset to render selected piece relative to where it has been picked
   let dragOffsetX: number;
   let dragOffsetY: number;
 
-  // FEN String tracker
-  let fenString: string;
+  // Score Textes
+  let whiteScore: HTMLParagraphElement;
+  let blackScore: HTMLParagraphElement;
 
   // *** P5 Functions *** //
 
   p.setup = () => {
     // Creating Canvas
     p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
+    p.windowResized();
 
-    setupControlPanel();
-    start(); // Initializes the chess object
+    initialize(); // Initializes the HTML elements
+    start(); // Start the game
   };
 
   p.draw = () => {
@@ -51,47 +54,34 @@ export const sketch = (p: p5) => {
     let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
     let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
     chess.release(file, rank);
+
+    updateScores();
   };
 
   p.windowResized = (event) => {
-    // TODO: Rethink
-
-    let MIN_DIM = 800;
-
-    if (window.innerWidth > MIN_DIM)
-      ChessState.BOARD_DIMENSION = window.innerWidth * 0.6;
-    else ChessState.BOARD_DIMENSION = MIN_DIM / 2;
-
-    ChessState.TILE_DIMENSION =
-      ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS;
-
+    ChessState.windowResizeCallback(window.innerWidth);
     p.resizeCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
   };
 
   // *** UTILITIES *** //
+
+  function initialize() {
+    // Score Elements
+    whiteScore = document.getElementById("white-score") as HTMLParagraphElement;
+    whiteScore.textContent = "0";
+
+    blackScore = document.getElementById("black-score") as HTMLParagraphElement;
+    blackScore.textContent = "0";
+  }
 
   function start() {
     // Creating Chess object
     chess = new Chess(p, ChessState.DEFAULT_FEN);
   }
 
-  function setupControlPanel() {
-    // Control Panel
-    let fenInput = document.getElementById(
-      "fen-string-input"
-    ) as HTMLInputElement;
-
-    fenInput.value = ChessState.DEFAULT_FEN; // Set default FEN value
-    fenInput.onchange = function () {
-      fenString = fenInput.value; // Update fenString when input changes
-      start(); // Restart the game with the new FEN string
-    };
-    fenString = fenInput.value; // Initialize fenString with default value
-
-    let fenButton = document.getElementById("restart-button"); // Get restart button element
-    fenButton.onclick = function () {
-      start(); // Restart the game when the button is clicked
-    };
+  function updateScores() {
+    whiteScore.textContent = chess.whiteScore.toString();
+    blackScore.textContent = chess.blackScore.toString();
   }
 };
 
