@@ -120,39 +120,40 @@ export default class Chess {
    */
   public release(file: number, rank: number) {
     // console.log("Releasing at %d %d", file, rank);
-    this.tryMove(file, rank);
-  }
-
-  public tryMove(file: number, rank: number) {
     if (this._selectedPiece != null) {
-      let pieceAtReleaseSpot = this.getPieceAt(file, rank);
-
-      if (
-        pieceAtReleaseSpot != null &&
-        pieceAtReleaseSpot != this._selectedPiece &&
-        this._selectedPiece.canMoveTo(file, rank)
-      ) {
-        // Moving into a non-empty spot (Eating)
-        this._pieces = this._pieces.filter((piece) => {
-          return piece != pieceAtReleaseSpot;
-        });
-
-        // Eating
-        if (this._selectedPiece.color === PieceColor.WHITE) {
-          this._piecesEatenByWhite.push(pieceAtReleaseSpot);
-        } else {
-          this._piecesEatenByBlack.push(pieceAtReleaseSpot);
-        }
-      }
-
-      if (this._selectedPiece.moveTo(file, rank)) {
-        this._turn =
-          this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-
-        this.timer.switch();
-      }
+      this.tryMove(this._selectedPiece, file, rank);
       this._selectedPiece.selected = false;
       this._selectedPiece = null;
+    }
+  }
+
+  public tryMove(piece: Piece, file: number, rank: number) {
+    let pieceAtReleaseSpot = this.getPieceAt(file, rank);
+
+    if (
+      pieceAtReleaseSpot != null &&
+      pieceAtReleaseSpot != piece &&
+      piece.canMoveTo(file, rank)
+    ) {
+      // Moving into a non-empty spot (Eating)
+      this._pieces = this._pieces.filter((piece) => {
+        return piece != pieceAtReleaseSpot;
+      });
+
+      // Eating
+      if (piece.color === PieceColor.WHITE) {
+        this._piecesEatenByWhite.push(pieceAtReleaseSpot);
+      } else {
+        this._piecesEatenByBlack.push(pieceAtReleaseSpot);
+      }
+    }
+
+    // Trying to perform the move
+    if (piece.moveTo(file, rank)) {
+      this._turn =
+        this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+      this.timer.switch();
     }
   }
 
@@ -194,13 +195,6 @@ export default class Chess {
       if (piece.isPlacedAt(file, rank)) return piece;
     }
     return null;
-  }
-
-  // *** SETTERS *** //
-
-  public nextTurn() {
-    this._turn =
-      this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
   }
 
   // *** UTILITIES *** //
