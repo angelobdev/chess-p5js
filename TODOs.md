@@ -7,7 +7,6 @@ If you want to collaborate to the project please refer to this list.
 ## Features
 
 - Winning recognition
-- Customizable Timer
 - Full FEN parser
 
 ## Bugs
