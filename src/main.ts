@@ -1,13 +1,15 @@
 import * as p5 from "p5";
 import Chess from "./chess";
 import ChessState from "./chess.state";
-import { PieceColor } from "./piece";
+import Piece, { PieceColor } from "./piece";
+import { IChessAI, RandomChessAI } from "./chess.ai";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
 
   // Main Chess Object
   let chess: Chess;
+  let chessAI: IChessAI;
 
   // Mouse offset to render selected piece relative to where it has been picked
   let dragOffsetX: number;
@@ -27,11 +29,12 @@ export const sketch = (p: p5) => {
     p.windowResized();
 
     initializeHTMLElements();
-    start(); // Start the game
+    initializeGame(); // Start the game
   };
 
   p.draw = () => {
     p.background(0);
+    if (chessAI != null) chessAI.update();
     chess.render();
   };
 
@@ -82,7 +85,7 @@ export const sketch = (p: p5) => {
     // Restart Button
     restartButton = document.getElementById("restart") as HTMLButtonElement;
     restartButton.onclick = () => {
-      start();
+      initializeGame();
     };
   }
 
@@ -93,8 +96,17 @@ export const sketch = (p: p5) => {
     blackScore.textContent = chess.blackScore.toString();
   }
 
-  function start() {
+  function initializeGame() {
     chess = new Chess(p, ChessState.DEFAULT_FEN);
+
+    // Initializing AI
+    let chessAIColor =
+      chess.turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+    // TODO: Add pick menu
+    // NOTE: Set chessAI to null to let a second person play
+    chessAI = new RandomChessAI(chess, chessAIColor);
+
     updateHTMLElements();
   }
 };

@@ -146,6 +146,10 @@ export default class Chess {
 
   // *** GETTERS *** //
 
+  public get pieces(): Array<Piece> {
+    return this._pieces;
+  }
+
   public get turn(): PieceColor {
     return this._turn;
   }
@@ -164,6 +168,13 @@ export default class Chess {
       if (piece.isPlacedAt(file, rank)) return piece;
     }
     return null;
+  }
+
+  // *** SETTERS *** //
+
+  public nextTurn() {
+    this._turn =
+      this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
   }
 
   // *** UTILITIES *** //
