@@ -15,7 +15,7 @@
         <div id="chess"></div>
       </div>
       <aside class="aside">
-        <!-- Summary -->
+        <!-- #region Summary -->
         <div class="container panel">
           <h1>Round Summary</h1>
           <span>
@@ -39,19 +39,34 @@
             <p id="black-score">0</p></span
           >
           <div class="buttons">
-            <button
-              id="restart"
-              class="button"
-              style="background-color: lightgreen"
-            >
-              Restart
-            </button>
+            <button id="restart" class="button">♻︎</button>
           </div>
         </div>
-        <!-- Timer -->
+        <!-- #endregion -->
+        <!-- #region Timer -->
         <div class="container panel">
           <h1>Timer</h1>
+
+          <div class="clocks">
+            <div class="clock player">
+              <button class="clock-button up" id="up-A">⬆</button>
+              <span class="time" id="player-timer">05:00</span>
+              <button class="clock-button down" id="down-A">⬇</button>
+            </div>
+            <p>vs</p>
+            <div class="clock opponent">
+              <button class="clock-button up" id="up-B">⬆</button>
+              <span class="time" id="opponent-timer">05:00</span>
+              <button class="clock-button down" id="down-B">⬇</button>
+            </div>
+          </div>
+          <div class="buttons">
+            <button id="start-timer" class="button">▶</button>
+          </div>
+          <hr class="solid" />
+          <p class="note">Timers will switch automatically</p>
         </div>
+        <!-- #endregion -->
       </aside>
     </div>
     <script src="bundle.js"></script>
