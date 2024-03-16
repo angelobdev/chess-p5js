@@ -1,37 +1,8 @@
-import Chess from "./chess";
-import Piece, { PieceColor } from "./piece";
-import Move from "./piece.movement";
+import Piece from "../core/piece";
+import Move from "../core/piece.movement";
+import IChessAI, { ChessAIMove } from "./chess.ai";
 
-export interface ChessAIMove {
-  piece: Piece;
-  file: number;
-  rank: number;
-}
-
-export abstract class IChessAI {
-  protected _chess: Chess;
-  protected _playerColor: PieceColor;
-
-  constructor(chess: Chess, playerColor: PieceColor) {
-    this._chess = chess;
-    this._playerColor = playerColor;
-  }
-
-  update() {
-    if (this._chess.turn === this._playerColor) {
-      // AI makes move
-      let move = this.generateNextMove();
-      this._chess.tryMove(move.piece, move.file, move.rank);
-    }
-  }
-
-  abstract generateNextMove(): ChessAIMove;
-}
-
-// Various Algorithms here:
-// ...
-
-export class RandomChessAI extends IChessAI {
+export default class RandomChessAI extends IChessAI {
   pickRandomMovablePiece(): Piece {
     let sameColorPieces = this._chess.pieces.filter((piece) => {
       return (

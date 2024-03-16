@@ -1,7 +1,7 @@
 import * as p5 from "p5";
+import ChessState from "../util/chess.state";
 import Chess from "./chess";
 import Move, { calculatePossibleMoves } from "./piece.movement";
-import ChessState from "./chess.state";
 
 // #region Enumerators
 

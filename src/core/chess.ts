@@ -1,5 +1,5 @@
-import ChessState from "./chess.state";
-import { ChessTimer } from "./chess.timer";
+import ChessState from "../util/chess.state";
+import ChessTimer from "../util/chess.timer";
 import Piece, { PieceColor } from "./piece";
 
 export default class Chess {
