@@ -3,6 +3,7 @@ import Chess from "./chess";
 import ChessState from "./chess.state";
 import Piece, { PieceColor } from "./piece";
 import { IChessAI, RandomChessAI } from "./chess.ai";
+import { ChessTimer } from "./chess.timer";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
@@ -22,6 +23,11 @@ export const sketch = (p: p5) => {
   let opponentSelect: HTMLSelectElement;
   let restartButton: HTMLButtonElement;
 
+  // Timer
+  let timerButton: HTMLButtonElement;
+  let timerASpan: HTMLSpanElement;
+  let timerBSpan: HTMLSpanElement;
+
   // *** P5 Functions *** //
 
   p.setup = () => {
@@ -34,22 +40,28 @@ export const sketch = (p: p5) => {
   };
 
   p.draw = () => {
-    p.background(0);
+    // Update
     if (chessAI != null) chessAI.update();
+    updateTimer();
+
+    // Render
+    p.background(0);
     chess.render();
   };
 
   p.mousePressed = (event) => {
-    let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
-    let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+    if (chess.timer.isStarted) {
+      let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
+      let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
 
-    if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-      chess.pick(file, rank);
+      if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+        chess.pick(file, rank);
 
-      dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
-      dragOffsetY = rank * ChessState.TILE_DIMENSION - p.mouseY;
+        dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
+        dragOffsetY = rank * ChessState.TILE_DIMENSION - p.mouseY;
 
-      chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+        chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+      }
     }
   };
 
@@ -66,13 +78,18 @@ export const sketch = (p: p5) => {
   };
 
   p.windowResized = (event) => {
-    ChessState.windowResizeCallback(window.innerWidth);
+    const SPAN = 350; //px
+    if (innerWidth >= innerHeight + SPAN)
+      ChessState.windowResizeCallback(innerHeight * 0.7);
+    else ChessState.windowResizeCallback(innerWidth * 0.5);
     p.resizeCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
   };
 
   // *** UTILITIES *** //
 
   function initializeHTMLElements() {
+    /// -- ROUND SUMMARY -- ///
+
     // Opponent chooser
     opponentSelect = document.getElementById(
       "opponent-chooser"
@@ -96,6 +113,48 @@ export const sketch = (p: p5) => {
     restartButton.onclick = () => {
       initializeGame();
     };
+
+    /// -- TIMER -- ///
+
+    // Timer values
+    timerASpan = document.getElementById("player-timer") as HTMLSpanElement;
+    timerBSpan = document.getElementById("opponent-timer") as HTMLSpanElement;
+
+    // Timer A
+    let timerAUpButton = document.getElementById("up-A") as HTMLButtonElement;
+    timerAUpButton.onclick = () => {
+      chess.timer.millisA += 10000;
+      updateTimer();
+    };
+
+    let timerADownButton = document.getElementById(
+      "down-A"
+    ) as HTMLButtonElement;
+    timerADownButton.onclick = () => {
+      chess.timer.millisA -= 10000;
+      updateTimer();
+    };
+
+    // Timer B
+    let timerBUpButton = document.getElementById("up-B") as HTMLButtonElement;
+    timerBUpButton.onclick = () => {
+      chess.timer.millisB += 10000;
+      updateTimer();
+    };
+
+    let timerBDownButton = document.getElementById(
+      "down-B"
+    ) as HTMLButtonElement;
+    timerBDownButton.onclick = () => {
+      chess.timer.millisB -= 10000;
+      updateTimer();
+    };
+
+    // Timer button
+    timerButton = document.getElementById("start-timer") as HTMLButtonElement;
+    timerButton.onclick = () => {
+      chess.timer.start();
+    };
   }
 
   function updateHTMLElements() {
@@ -103,6 +162,11 @@ export const sketch = (p: p5) => {
 
     whiteScore.textContent = chess.whiteScore.toString();
     blackScore.textContent = chess.blackScore.toString();
+  }
+
+  function updateTimer() {
+    timerASpan.innerText = chess.timer.timeA();
+    timerBSpan.innerText = chess.timer.timeB();
   }
 
   function initializeGame() {

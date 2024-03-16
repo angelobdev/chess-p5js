@@ -21,8 +21,7 @@ export abstract class IChessAI {
     if (this._chess.turn === this._playerColor) {
       // AI makes move
       let move = this.generateNextMove();
-      move.piece.moveTo(move.file, move.rank);
-      this._chess.nextTurn();
+      this._chess.tryMove(move.piece, move.file, move.rank);
     }
   }
 

@@ -1,4 +1,5 @@
 import ChessState from "./chess.state";
+import { ChessTimer } from "./chess.timer";
 import Piece, { PieceColor } from "./piece";
 
 export default class Chess {
@@ -17,6 +18,8 @@ export default class Chess {
 
   private _turn: PieceColor;
   private _firstTurn: PieceColor;
+
+  private _timer: ChessTimer;
 
   // *** CONSTRUCTOR *** //
 
@@ -37,6 +40,8 @@ export default class Chess {
     this._turn = PieceColor.WHITE;
     this._firstTurn = this._turn;
 
+    this._timer = new ChessTimer(300000, 300000);
+
     // Parsing FEN string
     this.parseFen(fen);
   }
@@ -46,7 +51,7 @@ export default class Chess {
   /**
    * Renders board and pieces
    */
-  render() {
+  public render() {
     // Rendering board
     for (let file = 0; file < ChessState.FILES_RANKS; file++) {
       for (let rank = 0; rank < ChessState.FILES_RANKS; rank++) {
@@ -77,7 +82,7 @@ export default class Chess {
    * @param file
    * @param rank
    */
-  pick(file: number, rank: number) {
+  public pick(file: number, rank: number) {
     // console.log("Picking at %d %d", file, rank);
     this._selectedPiece = this.getPieceAt(file, rank);
 
@@ -100,7 +105,7 @@ export default class Chess {
    * @param pickOffsetX
    * @param pickOffsetY
    */
-  drag(x: number, y: number, pickOffsetX: number, pickOffsetY: number) {
+  public drag(x: number, y: number, pickOffsetX: number, pickOffsetY: number) {
     // console.log("Dragging at %f %f", x, y);
     if (this._selectedPiece != null) {
       this._dragX = x + pickOffsetX;
@@ -113,36 +118,42 @@ export default class Chess {
    * @param file
    * @param rank
    */
-  release(file: number, rank: number) {
+  public release(file: number, rank: number) {
     // console.log("Releasing at %d %d", file, rank);
-
     if (this._selectedPiece != null) {
-      let pieceAtReleaseSpot = this.getPieceAt(file, rank);
-
-      if (
-        pieceAtReleaseSpot != null &&
-        pieceAtReleaseSpot != this._selectedPiece &&
-        this._selectedPiece.canMoveTo(file, rank)
-      ) {
-        // Moving into a non-empty spot (Eating)
-        this._pieces = this._pieces.filter((piece) => {
-          return piece != pieceAtReleaseSpot;
-        });
-
-        // Eating
-        if (this._selectedPiece.color === PieceColor.WHITE) {
-          this._piecesEatenByWhite.push(pieceAtReleaseSpot);
-        } else {
-          this._piecesEatenByBlack.push(pieceAtReleaseSpot);
-        }
-      }
-
-      if (this._selectedPiece.moveTo(file, rank)) {
-        this._turn =
-          this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-      }
+      this.tryMove(this._selectedPiece, file, rank);
       this._selectedPiece.selected = false;
       this._selectedPiece = null;
+    }
+  }
+
+  public tryMove(piece: Piece, file: number, rank: number) {
+    let pieceAtReleaseSpot = this.getPieceAt(file, rank);
+
+    if (
+      pieceAtReleaseSpot != null &&
+      pieceAtReleaseSpot != piece &&
+      piece.canMoveTo(file, rank)
+    ) {
+      // Moving into a non-empty spot (Eating)
+      this._pieces = this._pieces.filter((piece) => {
+        return piece != pieceAtReleaseSpot;
+      });
+
+      // Eating
+      if (piece.color === PieceColor.WHITE) {
+        this._piecesEatenByWhite.push(pieceAtReleaseSpot);
+      } else {
+        this._piecesEatenByBlack.push(pieceAtReleaseSpot);
+      }
+    }
+
+    // Trying to perform the move
+    if (piece.moveTo(file, rank)) {
+      this._turn =
+        this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+      this.timer.switch();
     }
   }
 
@@ -154,6 +165,10 @@ export default class Chess {
 
   public get turn(): PieceColor {
     return this._turn;
+  }
+
+  public get timer(): ChessTimer {
+    return this._timer;
   }
 
   public get playerColor(): PieceColor {
@@ -180,13 +195,6 @@ export default class Chess {
       if (piece.isPlacedAt(file, rank)) return piece;
     }
     return null;
-  }
-
-  // *** SETTERS *** //
-
-  public nextTurn() {
-    this._turn =
-      this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
   }
 
   // *** UTILITIES *** //
