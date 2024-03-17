@@ -7,6 +7,8 @@ If you want to collaborate to the project please refer to this list.
 ## Features
 
 - Winning recognition
+- Pinned pieces
+- Castling
 - Full FEN parser
 
 ## Bugs
