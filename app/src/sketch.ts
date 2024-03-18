@@ -1,9 +1,9 @@
 import * as p5 from "p5";
-import Chess from "./core/chess";
-import ChessState from "./util/chess.state";
-import { PieceColor } from "./core/piece";
 import IChessAI from "./algorithms/chess.ai";
 import RandomChessAI from "./algorithms/random.chess.ai";
+import Chess from "./core/chess";
+import { PieceColor } from "./core/piece";
+import ChessState from "./util/chess.state";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
@@ -189,6 +189,3 @@ export const sketch = (p: p5) => {
     }
   }
 };
-
-// Starting P5 Sketch
-new p5(sketch, document.getElementById("chess"));

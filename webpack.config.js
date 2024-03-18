@@ -1,25 +1,52 @@
 const path = require("path");
 
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const CopywebpackPlugin = require("copy-webpack-plugin");
+
 module.exports = {
-  mode: "development",
-  entry: "./src/main.ts",
+  context: __dirname,
+  entry: {
+    app: "./app/main.ts",
+  },
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
+  },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: "ts-loader",
+        test: /\.ts?$/,
+        loader: "ts-loader",
         exclude: /node_modules/,
+      },
+      {
+        test: /\.s?[ac]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.(png|gif|jpg|jpeg|svg|xml)$/,
+        use: ["url-loader"],
       },
     ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: [".ts", ".js"],
   },
-  output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "public"),
-  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "app/index.html",
+    }),
+    new CopywebpackPlugin({
+      patterns: [
+        {
+          from: "app/assets/**/*",
+          to: "assets/[name][ext]",
+        },
+      ],
+    }),
+  ],
   devServer: {
-    static: "./public",
+    static: path.join(__dirname, "dist"),
   },
 };
