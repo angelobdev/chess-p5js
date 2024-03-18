@@ -6,17 +6,17 @@ import Move, { calculatePossibleMoves } from "./piece.movement";
 // #region Enumerators
 
 export enum PieceColor {
-  WHITE = "white",
-  BLACK = "black",
+  WHITE = "White",
+  BLACK = "Black",
 }
 
 export enum PieceType {
-  PAWN = "pawn",
-  ROOK = "rook",
+  PAWN = "Pawn",
+  ROOK = "Rook",
   KNIGHT = "knight",
-  BISHOP = "bishop",
-  QUEEN = "queen",
-  KING = "king",
+  BISHOP = "Bishop",
+  QUEEN = "Queen",
+  KING = "King",
 }
 
 // #endregion
@@ -54,7 +54,12 @@ export default class Piece {
     this._hasMoved = false;
 
     // Getting texture file name
-    let textureFileName = "assets/" + this._color + "_" + this._type + ".png";
+    let textureFileName =
+      "assets/" +
+      this._color.toLowerCase() +
+      "_" +
+      this._type.toLowerCase() +
+      ".png";
 
     // Loading textures
     this._texture = Chess.p.loadImage(textureFileName, null, () => {

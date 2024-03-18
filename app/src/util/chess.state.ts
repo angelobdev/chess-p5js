@@ -7,6 +7,9 @@ export default class ChessState {
   public static TILE_DIMENSION =
     ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS; // Dimension of the tile (in pixels)
 
+  public static WHITE_COLOR = "#E7D4B5";
+  public static BLACK_COLOR = "#AD8768";
+
   public static OVERLAY_COLOR = "#00ff0020"; // Overlay color displayed on possible moves (tiles) of the selected piece
 
   public static windowResizeCallback(newSize: number) {

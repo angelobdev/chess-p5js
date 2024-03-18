@@ -1,0 +1,42 @@
+.buttons {
+  width: 100%;
+  height: 4rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: auto;
+  margin-bottom: 0.4rem;
+}
+
+.buttons > button {
+  flex: auto;
+  height: 80%;
+
+  font-size: large;
+  box-shadow: 0px 2px #0005;
+
+  border: 0;
+  border-radius: 0.4rem;
+
+  padding: 0;
+  margin: 1rem;
+
+  transition: 0.2s;
+
+  opacity: 0.7;
+}
+
+.buttons > button:hover {
+  transition: 0.2s;
+  opacity: 1;
+}
+
+.buttons > button:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px #0005;
+  transition: 0.2s;
+  opacity: 0.2;
+}

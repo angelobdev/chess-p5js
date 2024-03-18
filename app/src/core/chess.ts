@@ -56,7 +56,11 @@ export default class Chess {
     for (let file = 0; file < ChessState.FILES_RANKS; file++) {
       for (let rank = 0; rank < ChessState.FILES_RANKS; rank++) {
         Chess.p.noStroke();
-        Chess.p.fill((file + rank) % 2 == 0 ? "#E1BE95" : "#645442");
+        Chess.p.fill(
+          (file + rank) % 2 == 0
+            ? ChessState.WHITE_COLOR
+            : ChessState.BLACK_COLOR
+        );
         Chess.p.rect(
           file * ChessState.TILE_DIMENSION,
           rank * ChessState.TILE_DIMENSION,

@@ -1,9 +1,11 @@
-import * as p5 from "p5";
+import p5 from "p5";
 import IChessAI from "./algorithms/chess.ai";
 import RandomChessAI from "./algorithms/random.chess.ai";
 import Chess from "./core/chess";
 import { PieceColor } from "./core/piece";
 import ChessState from "./util/chess.state";
+
+const canvasID = "display";
 
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
@@ -32,7 +34,9 @@ export const sketch = (p: p5) => {
 
   p.setup = () => {
     // Creating Canvas
-    p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
+    p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION).id(
+      canvasID
+    );
     p.windowResized();
 
     initializeHTMLElements();
@@ -47,42 +51,98 @@ export const sketch = (p: p5) => {
     // Render
     p.background(0);
     chess.render();
-  };
 
-  p.mousePressed = (event) => {
-    if (chess.timer.isStarted) {
-      let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
-      let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+    if (!chess.timer.isStarted) {
+      let rectHeight = 80;
+      let rectSpan = 20;
 
-      if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-        chess.pick(file, rank);
+      p.fill(255);
+      p.rect(
+        rectSpan,
+        p.height / 2 - rectHeight,
+        p.width - 2 * rectSpan,
+        2 * rectHeight,
+        10
+      );
 
-        dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
-        dragOffsetY = rank * ChessState.TILE_DIMENSION - p.mouseY;
-
-        chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
-      }
+      p.textAlign("center");
+      p.fill(0);
+      p.textSize(p.width / 20);
+      p.text("Press play to start the game!", p.width / 2, p.height / 2);
     }
   };
 
-  p.mouseDragged = (event) => {
-    chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+  p.mousePressed = (event: Event) => {
+    if (event.target === document.getElementById(canvasID)) {
+      // console.log("Mouse pressed at %1.2f, %1.2f", p.mouseX, p.mouseY);
+
+      if (chess.timer.isStarted) {
+        let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
+        let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+          chess.pick(file, rank);
+
+          dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
+          dragOffsetY = rank * ChessState.TILE_DIMENSION - p.mouseY;
+
+          chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+        }
+      }
+
+      // Preventing scroll
+      event.preventDefault();
+    }
   };
 
-  p.mouseReleased = (event) => {
-    let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
-    let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
-    chess.release(file, rank);
+  p.mouseDragged = (event: Event) => {
+    if (event.target === document.getElementById(canvasID)) {
+      // console.log("Mouse dragged at %1.2f, %1.2f", p.mouseX, p.mouseY);
+      chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
 
-    updateHTMLElements();
+      // Preventing scroll
+      event.preventDefault();
+    }
+  };
+
+  p.mouseReleased = (event: Event) => {
+    if (event.target === document.getElementById(canvasID)) {
+      // console.log("Mouse released at %1.2f, %1.2f", p.mouseX, p.mouseY);
+
+      let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
+      let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+      chess.release(file, rank);
+
+      updateHTMLElements();
+
+      // Preventing scroll
+      event.preventDefault();
+    }
   };
 
   p.windowResized = (event) => {
-    const SPAN = 350; //px
-    if (innerWidth >= innerHeight + SPAN)
-      ChessState.windowResizeCallback(innerHeight * 0.7);
-    else ChessState.windowResizeCallback(innerWidth * 0.5);
+    if (innerWidth > 1600) {
+      ChessState.windowResizeCallback(innerWidth * 0.42);
+    } else if (innerWidth > 900) {
+      ChessState.windowResizeCallback(innerWidth * 0.5);
+    } else {
+      ChessState.windowResizeCallback(innerWidth * 0.86);
+    }
+
+    // Resizing
     p.resizeCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION);
+  };
+
+  p.touchStarted = (event: Event) => {
+    p.mousePressed(event);
+  };
+
+  p.touchMoved = (event: Event) => {
+    p.mouseDragged(event);
+  };
+
+  p.touchEnded = (event: Event) => {
+    p.mouseReleased(event);
   };
 
   // *** UTILITIES *** //
@@ -158,7 +218,7 @@ export const sketch = (p: p5) => {
   }
 
   function updateHTMLElements() {
-    turnText.textContent = chess.turn === PieceColor.WHITE ? "White" : "Black";
+    turnText.textContent = chess.turn.toString();
 
     whiteScore.textContent = chess.whiteScore.toString();
     blackScore.textContent = chess.blackScore.toString();
