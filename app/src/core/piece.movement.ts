@@ -35,29 +35,37 @@ export function calculatePossibleMoves(chess: Chess, piece: Piece): Move[] {
   function isCastlingPossible(king: Piece, rook: Piece, targetFile: number, targetRank: number): boolean {
     // Check if the king and rook are in their initial positions
     if (!king.hasMoved && !rook.hasMoved) {
-      // Determine the direction of the castling (castle to right or left)
-      let direction = targetFile > king.file ? 1 : -1;
+        // Determine the direction of the castling (castle to right or left)
+        let direction = targetFile > king.file ? 1 : -1;
 
-      // Check if there are no pieces between the king and the rook
-      let intermediateFiles = direction === 1 ? [king.file + 1, king.file + 2] : [king.file - 1, king.file - 2];
-      for (let file of intermediateFiles) {
-        if (chess.getPieceAt(file, king.rank)) {
-          return false; // Castle is invalid if there is a piece in the path
+        // Check if there are no pieces between the king and the rook
+        let intermediateFiles: number[] = [];
+        if (direction === 1) {
+            for (let file = king.file + 1; file < rook.file; file++) {
+                intermediateFiles.push(file);
+            }
+        } else {
+            for (let file = king.file - 1; file > rook.file; file--) {
+                intermediateFiles.push(file);
+            }
         }
-      }
+        for (let file of intermediateFiles) {
+            if (chess.getPieceAt(file, king.rank)) {
+                return false; // Castle is invalid if there is a piece in the path
+            }
+        }
 
-      // Check if the king is under check or crosses a square under attack
-      let squaresToCheck = direction === 1 ? [king.file, king.file + 1, king.file + 2] : [king.file - 2, king.file - 1, king.file];
-      for (let file of squaresToCheck) {
-        if (chess.isSquareUnderAttack(file, king.rank, king.color)) {
-          return false; // Castle is invalid if the king is under check or crosses a square under attack
+        // Check if the king is under check or crosses a square under attack
+        let squaresToCheck = direction === 1 ? [king.file, king.file + 1, king.file + 2] : [king.file - 2, king.file - 1, king.file];
+        for (let file of squaresToCheck) {
+            if (chess.isSquareUnderAttack(file, king.rank, king.color)) {
+                return false; // Castle is invalid if the king is under check or crosses a square under attack
+            }
         }
-      }
 
       // Castling is possible
       return true;
     }
-
     // Castle is invalid if the king or rook has already moved
     return false;
   }
