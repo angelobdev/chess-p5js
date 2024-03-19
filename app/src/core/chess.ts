@@ -1,6 +1,6 @@
-import ChessState from "../util/chess.state";
+import ChessState from "../static/chess.state";
 import ChessTimer from "../util/chess.timer";
-import Piece, { PieceColor } from "./piece";
+import Piece, { PieceColor, PieceType } from "./piece";
 
 export default class Chess {
   // #region *** FIELDS *** //
@@ -105,6 +105,30 @@ export default class Chess {
         (rank + 0.3) * ChessState.TILE_DIMENSION
       );
     }
+
+    // Rendering Start overlay
+    if (!this._timer.isStarted) {
+      let rectHeight = 80;
+      let rectSpan = 20;
+
+      Chess.p.fill(255);
+      Chess.p.rect(
+        rectSpan,
+        Chess.p.height / 2 - rectHeight,
+        Chess.p.width - 2 * rectSpan,
+        2 * rectHeight,
+        10
+      );
+
+      Chess.p.textAlign("center");
+      Chess.p.fill(0);
+      Chess.p.textSize(Chess.p.width / 20);
+      Chess.p.text(
+        "Press play to start the game!",
+        Chess.p.width / 2,
+        Chess.p.height / 2
+      );
+    }
   }
 
   /**
@@ -155,6 +179,29 @@ export default class Chess {
    */
   public releaseCallback(file: number, rank: number) {
     // console.log("Releasing at %d %d", file, rank);
+
+    // Check if it's a castle move
+    if (this.selectedPiece && this.selectedPiece.type === PieceType.KING) {
+      // If the selected piece is a king, check if the move is an attempted castling
+      const kingFile = this.selectedPiece.file;
+      const targetFile = file;
+
+      // Check if the player is trying to castle
+      if (Math.abs(targetFile - kingFile) === 2) {
+        // Determine the rook's file based on the direction of the castling
+        const rookFile = targetFile > kingFile ? 7 : 0;
+        const rook = this.getPieceAt(rookFile, rank);
+
+        // Try to perform the castling
+        if (this.tryCastle(this.selectedPiece, rook, targetFile, rank)) {
+          // Successful castling
+          this.selectedPiece.selected = false;
+          this.selectedPiece = null;
+          return;
+        }
+      }
+    }
+
     if (this._selectedPiece != null) {
       this.tryMove(this._selectedPiece, file, rank);
       this._selectedPiece.selected = false;

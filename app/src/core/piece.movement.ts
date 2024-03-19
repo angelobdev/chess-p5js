@@ -32,36 +32,44 @@ export function calculatePossibleMoves(chess: Chess, piece: Piece): Move[] {
   }
 
   // Helper function to check if castling is possible
-  function isCastlingPossible(king: Piece, rook: Piece, targetFile: number, targetRank: number): boolean {
+  function isCastlingPossible(
+    king: Piece,
+    rook: Piece,
+    targetFile: number,
+    targetRank: number
+  ): boolean {
     // Check if the king and rook are in their initial positions
     if (!king.hasMoved && !rook.hasMoved) {
-        // Determine the direction of the castling (castle to right or left)
-        let direction = targetFile > king.file ? 1 : -1;
+      // Determine the direction of the castling (castle to right or left)
+      let direction = targetFile > king.file ? 1 : -1;
 
-        // Check if there are no pieces between the king and the rook
-        let intermediateFiles: number[] = [];
-        if (direction === 1) {
-            for (let file = king.file + 1; file < rook.file; file++) {
-                intermediateFiles.push(file);
-            }
-        } else {
-            for (let file = king.file - 1; file > rook.file; file--) {
-                intermediateFiles.push(file);
-            }
+      // Check if there are no pieces between the king and the rook
+      let intermediateFiles: number[] = [];
+      if (direction === 1) {
+        for (let file = king.file + 1; file < rook.file; file++) {
+          intermediateFiles.push(file);
         }
-        for (let file of intermediateFiles) {
-            if (chess.getPieceAt(file, king.rank)) {
-                return false; // Castle is invalid if there is a piece in the path
-            }
+      } else {
+        for (let file = king.file - 1; file > rook.file; file--) {
+          intermediateFiles.push(file);
         }
+      }
+      for (let file of intermediateFiles) {
+        if (chess.getPieceAt(file, king.rank)) {
+          return false; // Castle is invalid if there is a piece in the path
+        }
+      }
 
-        // Check if the king is under check or crosses a square under attack
-        let squaresToCheck = direction === 1 ? [king.file, king.file + 1, king.file + 2] : [king.file - 2, king.file - 1, king.file];
-        for (let file of squaresToCheck) {
-            if (chess.isSquareUnderAttack(file, king.rank, king.color)) {
-                return false; // Castle is invalid if the king is under check or crosses a square under attack
-            }
+      // Check if the king is under check or crosses a square under attack
+      let squaresToCheck =
+        direction === 1
+          ? [king.file, king.file + 1, king.file + 2]
+          : [king.file - 2, king.file - 1, king.file];
+      for (let file of squaresToCheck) {
+        if (chess.isSquareUnderAttack(file, king.rank, king.color)) {
+          return false; // Castle is invalid if the king is under check or crosses a square under attack
         }
+      }
 
       // Castling is possible
       return true;
@@ -261,16 +269,28 @@ export function calculatePossibleMoves(chess: Chess, piece: Piece): Move[] {
       if (!piece.hasMoved) {
         // Check castling on the king side
         let kingSideRook = chess.getPieceAt(7, piece.rank);
-        if (kingSideRook && kingSideRook.type === PieceType.ROOK && !kingSideRook.hasMoved) {
-          if (isCastlingPossible(piece, kingSideRook, piece.file + 2, piece.rank)) {
+        if (
+          kingSideRook &&
+          kingSideRook.type === PieceType.ROOK &&
+          !kingSideRook.hasMoved
+        ) {
+          if (
+            isCastlingPossible(piece, kingSideRook, piece.file + 2, piece.rank)
+          ) {
             addMove(piece.file + 2, piece.rank); // Add castling move
           }
         }
 
         // Check castling on the queen side
         let queenSideRook = chess.getPieceAt(0, piece.rank);
-        if (queenSideRook && queenSideRook.type === PieceType.ROOK && !queenSideRook.hasMoved) {
-          if (isCastlingPossible(piece, queenSideRook, piece.file - 2, piece.rank)) {
+        if (
+          queenSideRook &&
+          queenSideRook.type === PieceType.ROOK &&
+          !queenSideRook.hasMoved
+        ) {
+          if (
+            isCastlingPossible(piece, queenSideRook, piece.file - 2, piece.rank)
+          ) {
             addMove(piece.file - 2, piece.rank); // Add castling move
           }
         }
