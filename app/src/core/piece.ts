@@ -132,15 +132,31 @@ export default class Piece {
    * @param rank
    * @returns
    */
-  public moveTo(file: number, rank: number): boolean {
+  public moveTo(chess: Chess, file: number, rank: number): boolean {
     if (this.canMoveTo(file, rank)) {
-      this.setPosition(file, rank);
-      this._hasMoved = true;
-      return true;
+      if (this.type === PieceType.KING && Math.abs(file - this.file) === 2) {
+        // Castling
+        let rookFile = file === 6 ? 7 : 0; // Destination of the rook for castling
+        let rook = chess.getPieceAt(rookFile, rank);
+        let targetFile = file === 6 ? file - 1 : file + 1; // Square traversed by the king during castling
+        if (chess.tryCastle(this, rook, targetFile, rank)) {
+          // Successful castling
+          this._hasMoved = true;
+          return true;
+        } else {
+          // Invalid castling
+          return false;
+        }
+      } else {
+        // Normal move
+        this.setPosition(file, rank);
+        this._hasMoved = true;
+        return true;
+      }
     }
     return false;
-  }
-
+  }  
+  
   /**
    * Returns true if the piece can be moved to the (file, rank) position
    * @param file
