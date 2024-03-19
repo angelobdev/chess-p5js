@@ -155,8 +155,8 @@ export default class Piece {
       }
     }
     return false;
-  }  
-  
+  }
+
   /**
    * Returns true if the piece can be moved to the (file, rank) position
    * @param file

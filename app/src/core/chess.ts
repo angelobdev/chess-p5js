@@ -3,7 +3,7 @@ import ChessTimer from "../util/chess.timer";
 import Piece, { PieceColor } from "./piece";
 
 export default class Chess {
-  // *** FIELDS *** //
+  // #region *** FIELDS *** //
 
   public static p: p5;
 
@@ -21,7 +21,9 @@ export default class Chess {
 
   private _timer: ChessTimer;
 
-  // *** CONSTRUCTOR *** //
+  // #endregion *** FIELDS *** //
+
+  // #region *** CONSTRUCTOR *** //
 
   constructor(p: p5, fen: string) {
     // Initializing P5
@@ -46,15 +48,17 @@ export default class Chess {
     this.parseFen(fen);
   }
 
-  // *** METHODS *** //
+  // #endregion *** CONSTRUCTOR *** //
+
+  // #region *** P5 METHODS *** //
 
   /**
    * Renders board and pieces
    */
   public render() {
     // Rendering board
-    for (let file = 0; file < ChessState.FILES_RANKS; file++) {
-      for (let rank = 0; rank < ChessState.FILES_RANKS; rank++) {
+    for (let file = 0; file < ChessState.FILES_RANKS_COUNT; file++) {
+      for (let rank = 0; rank < ChessState.FILES_RANKS_COUNT; rank++) {
         Chess.p.noStroke();
         Chess.p.fill(
           (file + rank) % 2 == 0
@@ -83,7 +87,7 @@ export default class Chess {
     // Rendering file letters
     Chess.p.textSize(Chess.p.width / 30);
 
-    for (let file = 0; file < ChessState.FILES_RANKS; file++) {
+    for (let file = 0; file < ChessState.FILES_RANKS_COUNT; file++) {
       Chess.p.fill(0);
       Chess.p.text(
         String.fromCharCode(97 + file),
@@ -93,7 +97,7 @@ export default class Chess {
     }
 
     // Rendering rank numbers
-    for (let rank = 0; rank < ChessState.FILES_RANKS; rank++) {
+    for (let rank = 0; rank < ChessState.FILES_RANKS_COUNT; rank++) {
       Chess.p.fill(0);
       Chess.p.text(
         8 - rank,
@@ -108,7 +112,7 @@ export default class Chess {
    * @param file
    * @param rank
    */
-  public pick(file: number, rank: number) {
+  public pickCallback(file: number, rank: number) {
     // console.log("Picking at %d %d", file, rank);
     this._selectedPiece = this.getPieceAt(file, rank);
 
@@ -131,7 +135,12 @@ export default class Chess {
    * @param pickOffsetX
    * @param pickOffsetY
    */
-  public drag(x: number, y: number, pickOffsetX: number, pickOffsetY: number) {
+  public dragCallback(
+    x: number,
+    y: number,
+    pickOffsetX: number,
+    pickOffsetY: number
+  ) {
     // console.log("Dragging at %f %f", x, y);
     if (this._selectedPiece != null) {
       this._dragX = x + pickOffsetX;
@@ -144,7 +153,7 @@ export default class Chess {
    * @param file
    * @param rank
    */
-  public release(file: number, rank: number) {
+  public releaseCallback(file: number, rank: number) {
     // console.log("Releasing at %d %d", file, rank);
     if (this._selectedPiece != null) {
       this.tryMove(this._selectedPiece, file, rank);
@@ -153,9 +162,33 @@ export default class Chess {
     }
   }
 
+  // #endregion *** P5 METHODS *** //
+
+  // #region *** CHESS METHODS *** //
+
+  /**
+   * Returns the piece placed at [file, rank] position
+   * @param file
+   * @param rank
+   * @returns
+   */
+  public getPieceAt(file: number, rank: number): Piece {
+    for (let i = 0; i < this._pieces.length; i++) {
+      const piece = this._pieces[i];
+      if (piece.isPlacedAt(file, rank)) return piece;
+    }
+    return null;
+  }
+
+  /**
+   * Tries to move the piece in the specified spot
+   * @param piece Piece to move
+   * @param file File to move the object in
+   * @param rank Rank to move the object in
+   */
   public tryMove(piece: Piece, file: number, rank: number) {
     let pieceAtReleaseSpot = this.getPieceAt(file, rank);
-  
+
     if (
       pieceAtReleaseSpot != null &&
       pieceAtReleaseSpot != piece &&
@@ -165,7 +198,7 @@ export default class Chess {
       this._pieces = this._pieces.filter((p) => {
         return p != pieceAtReleaseSpot;
       });
-  
+
       // Eating
       if (piece.color === PieceColor.WHITE) {
         this._piecesEatenByWhite.push(pieceAtReleaseSpot);
@@ -173,66 +206,155 @@ export default class Chess {
         this._piecesEatenByBlack.push(pieceAtReleaseSpot);
       }
     }
-  
+
     // Trying to perform the move
-    if (piece.moveTo(this, file, rank)) { // Passa un'istanza di Chess come primo parametro
+    if (piece.moveTo(this, file, rank)) {
+      // Passa un'istanza di Chess come primo parametro
       this._turn =
         this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-  
+
       this.timer.switch();
     }
-  }  
-
-  public set selectedPiece(piece: Piece | null) {
-    this._selectedPiece = piece;
   }
 
-  // *** GETTERS *** //
+  public tryCastle(
+    king: Piece,
+    rook: Piece,
+    targetFile: number,
+    targetRank: number
+  ): boolean {
+    // Check if the king and rook are in their initial positions
+    if (!king.hasMoved && !rook.hasMoved) {
+      // Determine the direction of the castling (castle to right or left)
+      let direction = targetFile > king.file ? 1 : -1;
 
+      // Check if there are no pieces between the king and the rook
+      let intermediateFiles =
+        direction === 1
+          ? [king.file + 1, king.file + 2]
+          : [king.file - 1, king.file - 2];
+      for (let file of intermediateFiles) {
+        if (this.getPieceAt(file, king.rank)) {
+          return false; // Castle is invalid if there is a piece in the path
+        }
+      }
+
+      // Check if the king is under check or crosses a square under attack
+      let squaresToCheck =
+        direction === 1
+          ? [king.file, king.file + 1, king.file + 2]
+          : [king.file - 2, king.file - 1, king.file];
+      for (let file of squaresToCheck) {
+        if (this.isSquareUnderAttack(file, king.rank, king.color)) {
+          return false; // Castle is invalid if the king is under check or crosses a square under attack
+        }
+      }
+
+      // Determine the final file for the king and rook
+      let finalKingFile = king.file + 2 * direction; // Move the king two squares towards the rook
+      let finalRookFile = targetFile - direction; // Move the rook next to the king
+
+      // Move the king and rook
+      king.setPosition(finalKingFile, targetRank);
+      rook.setPosition(finalRookFile, targetRank);
+
+      return true; // Successful castle
+    }
+
+    return false; // Castle is invalid if the king or rook has already moved
+  }
+
+  public isSquareUnderAttack(
+    file: number,
+    rank: number,
+    color: PieceColor
+  ): boolean {
+    // Iterate through all opponent's pieces and check if they can move to the square
+    // or if the square is within the attack range of an opponent's piece
+    for (let piece of this.pieces) {
+      if (piece.color !== color) {
+        let possibleMoves = piece.getPossibleMoves(this);
+        for (let move of possibleMoves) {
+          if (move.toFile === file && move.toRank === rank) {
+            return true; // Square is under attack
+          }
+        }
+      }
+    }
+    return false; // Is not under attack
+  }
+
+  // #endregion *** CHESS METHODS *** //
+
+  // #region *** GETTERS AND SETTERS *** //
+
+  /**
+   * Returns the array of pieces placed on the board
+   */
   public get pieces(): Array<Piece> {
     return this._pieces;
   }
 
+  /**
+   * Returns the current turn (color)
+   */
   public get turn(): PieceColor {
     return this._turn;
   }
 
+  /**
+   * Returns the Chess Timer object
+   */
   public get timer(): ChessTimer {
     return this._timer;
   }
 
+  /**
+   * Returns the color of the player (The one who starts first)
+   */
   public get playerColor(): PieceColor {
     return this._firstTurn;
   }
 
+  /**
+   * Returns the color of the opponent (The one who starts second)
+   */
   public get opponentColor(): PieceColor {
     return this._firstTurn === PieceColor.WHITE
       ? PieceColor.BLACK
       : PieceColor.WHITE;
   }
 
+  /**
+   * Returns the current score of the white player
+   */
   public get whiteScore(): number {
     return Chess.calculateScore(this._piecesEatenByWhite);
   }
 
+  /**
+   * Returns the current score of the black player
+   */
   public get blackScore(): number {
     return Chess.calculateScore(this._piecesEatenByBlack);
   }
 
-  public getPieceAt(file: number, rank: number): Piece {
-    for (let i = 0; i < this._pieces.length; i++) {
-      const piece = this._pieces[i];
-      if (piece.isPlacedAt(file, rank)) return piece;
-    }
-    return null;
-  }
-
+  /**
+   * Returns the current selected piece (null if no piece is selected)
+   */
   public get selectedPiece(): Piece | null {
     return this._selectedPiece;
   }
 
-  // *** UTILITIES *** //
+  public set selectedPiece(piece: Piece | null) {
+    this._selectedPiece = piece;
+  }
 
+  // #endregion *** GETTERS AND SETTERS *** //
+
+  // #region *** UTILITIES *** //
+
+  /// CALCULATES THE SCORE BASED ON EATEN PIECES
   private static calculateScore(eatenPieces: Array<Piece>): number {
     let score: number = 0;
     eatenPieces.forEach((piece) => {
@@ -241,6 +363,7 @@ export default class Chess {
     return score;
   }
 
+  /// PARSES THE PASSED FEN STRING
   private parseFen(fen: string) {
     // Example FEN:
     // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
@@ -252,8 +375,8 @@ export default class Chess {
 
       if (index < 64) {
         // Placing pieces
-        let file = index % ChessState.FILES_RANKS;
-        let rank = Math.floor(index / ChessState.FILES_RANKS);
+        let file = index % ChessState.FILES_RANKS_COUNT;
+        let rank = Math.floor(index / ChessState.FILES_RANKS_COUNT);
 
         if (symbol.match("[a-zA-Z]")) {
           // Selecting piece based on symbol (letter)
@@ -275,55 +398,5 @@ export default class Chess {
     }
   }
 
-  public tryCastle(king: Piece, rook: Piece, targetFile: number, targetRank: number): boolean {
-    // Check if the king and rook are in their initial positions
-    if (!king.hasMoved && !rook.hasMoved) {
-        // Determine the direction of the castling (castle to right or left)
-        let direction = targetFile > king.file ? 1 : -1;
-
-        // Check if there are no pieces between the king and the rook
-        let intermediateFiles = direction === 1 ? [king.file + 1, king.file + 2] : [king.file - 1, king.file - 2];
-        for (let file of intermediateFiles) {
-            if (this.getPieceAt(file, king.rank)) {
-                return false; // Castle is invalid if there is a piece in the path
-            }
-        }
-
-        // Check if the king is under check or crosses a square under attack
-        let squaresToCheck = direction === 1 ? [king.file, king.file + 1, king.file + 2] : [king.file - 2, king.file - 1, king.file];
-        for (let file of squaresToCheck) {
-            if (this.isSquareUnderAttack(file, king.rank, king.color)) {
-                return false; // Castle is invalid if the king is under check or crosses a square under attack
-            }
-        }
-
-        // Determine the final file for the king and rook
-        let finalKingFile = king.file + (2 * direction); // Move the king two squares towards the rook
-        let finalRookFile = targetFile - direction; // Move the rook next to the king
-
-        // Move the king and rook
-        king.setPosition(finalKingFile, targetRank);
-        rook.setPosition(finalRookFile, targetRank);
-
-        return true; // Successful castle
-    }
-
-    return false; // Castle is invalid if the king or rook has already moved
-  }
-
-  public isSquareUnderAttack(file: number, rank: number, color: PieceColor): boolean {
-    // Iterate through all opponent's pieces and check if they can move to the square
-    // or if the square is within the attack range of an opponent's piece
-    for (let piece of this.pieces) {
-      if (piece.color !== color) {
-        let possibleMoves = piece.getPossibleMoves(this);
-        for (let move of possibleMoves) {
-          if (move.toFile === file && move.toRank === rank) {
-            return true; // Square is under attack
-          }
-        }
-      }
-    }
-    return false; // Is not under attack
-  }
+  // #endregion *** UTILITIES *** //
 }

@@ -77,16 +77,20 @@ export const sketch = (p: p5) => {
       // console.log("Mouse pressed at %1.2f, %1.2f", p.mouseX, p.mouseY);
 
       if (chess.timer.isStarted) {
-        let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
-        let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+        let file = Math.floor(
+          (p.mouseX / p.width) * ChessState.FILES_RANKS_COUNT
+        );
+        let rank = Math.floor(
+          (p.mouseY / p.width) * ChessState.FILES_RANKS_COUNT
+        );
 
         if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-          chess.pick(file, rank);
+          chess.pickCallback(file, rank);
 
           dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
           dragOffsetY = rank * ChessState.TILE_DIMENSION - p.mouseY;
 
-          chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+          chess.dragCallback(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
         }
       }
 
@@ -98,7 +102,7 @@ export const sketch = (p: p5) => {
   p.mouseDragged = (event: Event) => {
     if (event.target === document.getElementById(canvasID)) {
       // console.log("Mouse dragged at %1.2f, %1.2f", p.mouseX, p.mouseY);
-      chess.drag(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
+      chess.dragCallback(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
 
       // Preventing scroll
       event.preventDefault();
@@ -107,20 +111,24 @@ export const sketch = (p: p5) => {
 
   p.mouseReleased = (event: Event) => {
     if (event.target === document.getElementById(canvasID)) {
-      let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
-      let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
-  
+      let file = Math.floor(
+        (p.mouseX / p.width) * ChessState.FILES_RANKS_COUNT
+      );
+      let rank = Math.floor(
+        (p.mouseY / p.width) * ChessState.FILES_RANKS_COUNT
+      );
+
       if (chess.selectedPiece && chess.selectedPiece.type === PieceType.KING) {
         // If the selected piece is a king, check if the move is an attempted castling
         const kingFile = chess.selectedPiece.file;
         const targetFile = file;
-  
+
         // Check if the player is trying to castle
         if (Math.abs(targetFile - kingFile) === 2) {
           // Determine the rook's file based on the direction of the castling
           const rookFile = targetFile > kingFile ? 7 : 0;
           const rook = chess.getPieceAt(rookFile, rank);
-  
+
           // Try to perform the castling
           if (chess.tryCastle(chess.selectedPiece, rook, targetFile, rank)) {
             // Successful castling
@@ -131,14 +139,14 @@ export const sketch = (p: p5) => {
           }
         }
       }
-  
+
       // If it's not a castling move, proceed with the regular move
-      chess.release(file, rank);
+      chess.releaseCallback(file, rank);
       updateHTMLElements();
       // Preventing scroll
       event.preventDefault();
     }
-  };  
+  };
 
   p.windowResized = (event) => {
     if (innerWidth > 1600) {
@@ -250,7 +258,7 @@ export const sketch = (p: p5) => {
   }
 
   function initializeGame() {
-    chess = new Chess(p, ChessState.DEFAULT_FEN);
+    chess = new Chess(p, ChessState.CURRENT_FEN);
 
     updateHTMLElements();
     initializeChessAI();

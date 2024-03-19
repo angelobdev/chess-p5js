@@ -1,20 +1,52 @@
 export default class ChessState {
-  public static DEFAULT_FEN =
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; // Standard FEN
+  // *** FIELDS *** //
 
-  public static FILES_RANKS = 8; // Number of files and ranks
-  public static BOARD_DIMENSION = 600; // Dimension of the board (in pixels)
-  public static TILE_DIMENSION =
-    ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS; // Dimension of the tile (in pixels)
+  // Logic values
+  private static _currentFen =
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-  public static WHITE_COLOR = "#E7D4B5";
-  public static BLACK_COLOR = "#AD8768";
+  // Rendering values
+  private static _boardDimension = 600; // Dimension of the board (in pixels)
+  private static _filesRanksCount = 8; // Number of files and ranks
 
-  public static OVERLAY_COLOR = "#00ff0020"; // Overlay color displayed on possible moves (tiles) of the selected piece
+  // Colors
+  private static _whiteColor = "#E7D4B5";
+  private static _blackColor = "#AD8768";
+  private static _overlayColor = "#00ff0020"; // Overlay color displayed on possible moves (tiles) of the selected piece
+
+  // Getters
+
+  public static get CURRENT_FEN() {
+    return ChessState._currentFen; // Standard FEN
+  }
+
+  public static get BOARD_DIMENSION() {
+    return ChessState._boardDimension;
+  }
+
+  public static get FILES_RANKS_COUNT() {
+    return ChessState._filesRanksCount;
+  }
+
+  public static get TILE_DIMENSION() {
+    return ChessState._boardDimension / ChessState._filesRanksCount;
+  }
+
+  public static get WHITE_COLOR() {
+    return ChessState._whiteColor;
+  }
+
+  public static get BLACK_COLOR() {
+    return ChessState._blackColor;
+  }
+
+  public static get OVERLAY_COLOR() {
+    return ChessState._overlayColor;
+  }
+
+  // Callbacks
 
   public static windowResizeCallback(newSize: number) {
-    ChessState.BOARD_DIMENSION = newSize; // The 0.48 value refers to the CSS values of the containers (80vh * 60%)
-    ChessState.TILE_DIMENSION =
-      ChessState.BOARD_DIMENSION / ChessState.FILES_RANKS;
+    ChessState._boardDimension = newSize; // The 0.48 value refers to the CSS values of the containers (80vh * 60%)
   }
 }
