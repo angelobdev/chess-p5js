@@ -1,124 +1,129 @@
-import Chess from "core/chess";
+import Chess from 'core/chess';
 
 export default class DOMHandler {
-  // Round summary textes
-  private static _turnText: HTMLParagraphElement;
-  private static _whiteScore: HTMLParagraphElement;
-  private static _blackScore: HTMLParagraphElement;
-  private static _opponentSelect: HTMLSelectElement;
-  private static _restartButton: HTMLButtonElement;
+	// Round summary
+	private static _opponentSelect: HTMLSelectElement;
 
-  // Timer
-  private static _timerButton: HTMLButtonElement;
-  private static _timerASpan: HTMLSpanElement;
-  private static _timerBSpan: HTMLSpanElement;
+	private static _turnText: HTMLParagraphElement;
 
-  // *** METHODS *** //
+	private static _whiteScore: HTMLParagraphElement;
+	private static _blackScore: HTMLParagraphElement;
 
-  public static initialize(
-    chess: Chess,
-    initializeGame: CallableFunction,
-    intializeAI: CallableFunction
-  ) {
-    /// -- ROUND SUMMARY -- ///
+	private static _whitePiecesBox: HTMLDivElement;
+	private static _blackPiecesBox: HTMLDivElement;
 
-    // Opponent chooser
-    DOMHandler._opponentSelect = document.getElementById(
-      "opponent-chooser"
-    ) as HTMLSelectElement;
-    DOMHandler._opponentSelect.onchange = () => {
-      intializeAI();
-    };
+	private static _restartButton: HTMLButtonElement;
 
-    // Turn text
-    DOMHandler._turnText = document.getElementById(
-      "turn"
-    ) as HTMLParagraphElement;
+	// Timer
+	private static _timerButton: HTMLButtonElement;
+	private static _timerASpan: HTMLSpanElement;
+	private static _timerBSpan: HTMLSpanElement;
 
-    // Score Elements
-    DOMHandler._whiteScore = document.getElementById(
-      "white-score"
-    ) as HTMLParagraphElement;
-    DOMHandler._whiteScore.textContent = "0";
+	// *** METHODS *** //
 
-    DOMHandler._blackScore = document.getElementById(
-      "black-score"
-    ) as HTMLParagraphElement;
-    DOMHandler._blackScore.textContent = "0";
+	public static initialize(chess: Chess, initializeGame: CallableFunction, intializeAI: CallableFunction) {
+		/// -- ROUND SUMMARY -- ///
 
-    // Restart Button
-    DOMHandler._restartButton = document.getElementById(
-      "restart"
-    ) as HTMLButtonElement;
-    DOMHandler._restartButton.onclick = () => {
-      initializeGame();
-    };
+		// Opponent chooser
+		DOMHandler._opponentSelect = document.getElementById('opponent-chooser') as HTMLSelectElement;
+		DOMHandler._opponentSelect.onchange = () => {
+			intializeAI();
+		};
 
-    /// -- TIMER -- ///
+		// Turn text
+		DOMHandler._turnText = document.getElementById('turn') as HTMLParagraphElement;
 
-    // Timer values
-    DOMHandler._timerASpan = document.getElementById(
-      "player-timer"
-    ) as HTMLSpanElement;
-    DOMHandler._timerBSpan = document.getElementById(
-      "opponent-timer"
-    ) as HTMLSpanElement;
+		// Score Elements
+		DOMHandler._whiteScore = document.getElementById('white-score') as HTMLParagraphElement;
+		DOMHandler._whiteScore.textContent = '0';
 
-    // Timer A
-    let timerAUpButton = document.getElementById("up-A") as HTMLButtonElement;
-    timerAUpButton.onclick = () => {
-      chess.timer.millisA += 10000;
-      DOMHandler.updateTimerTextes(chess);
-    };
+		DOMHandler._blackScore = document.getElementById('black-score') as HTMLParagraphElement;
+		DOMHandler._blackScore.textContent = '0';
 
-    let timerADownButton = document.getElementById(
-      "down-A"
-    ) as HTMLButtonElement;
-    timerADownButton.onclick = () => {
-      chess.timer.millisA -= 10000;
-      DOMHandler.updateTimerTextes(chess);
-    };
+		// Pieces boxes
+		DOMHandler._whitePiecesBox = document.getElementById('white-pieces') as HTMLDivElement;
+		DOMHandler._blackPiecesBox = document.getElementById('black-pieces') as HTMLDivElement;
 
-    // Timer B
-    let timerBUpButton = document.getElementById("up-B") as HTMLButtonElement;
-    timerBUpButton.onclick = () => {
-      chess.timer.millisB += 10000;
-      DOMHandler.updateTimerTextes(chess);
-    };
+		// Restart Button
+		DOMHandler._restartButton = document.getElementById('restart') as HTMLButtonElement;
+		DOMHandler._restartButton.onclick = () => {
+			initializeGame();
+		};
 
-    let timerBDownButton = document.getElementById(
-      "down-B"
-    ) as HTMLButtonElement;
-    timerBDownButton.onclick = () => {
-      chess.timer.millisB -= 10000;
-      DOMHandler.updateTimerTextes(chess);
-    };
+		/// -- TIMER -- ///
 
-    // Timer button
-    DOMHandler._timerButton = document.getElementById(
-      "start-timer"
-    ) as HTMLButtonElement;
-    DOMHandler._timerButton.onclick = () => {
-      chess.timer.start();
-    };
-  }
+		// Timer values
+		DOMHandler._timerASpan = document.getElementById('player-timer') as HTMLSpanElement;
+		DOMHandler._timerBSpan = document.getElementById('opponent-timer') as HTMLSpanElement;
 
-  public static update(chess: Chess) {
-    DOMHandler._turnText.textContent = chess.turn.toString();
-    DOMHandler._whiteScore.textContent = chess.whiteScore.toString();
-    DOMHandler._blackScore.textContent = chess.blackScore.toString();
-  }
+		// Timer A
+		let timerAUpButton = document.getElementById('up-A') as HTMLButtonElement;
+		timerAUpButton.onclick = () => {
+			chess.timer.millisA += 10000;
+			DOMHandler.updateTimerTextes(chess);
+		};
 
-  // *** GETTERS *** //
+		let timerADownButton = document.getElementById('down-A') as HTMLButtonElement;
+		timerADownButton.onclick = () => {
+			chess.timer.millisA -= 10000;
+			DOMHandler.updateTimerTextes(chess);
+		};
 
-  public static get opponentSelector() {
-    return DOMHandler._opponentSelect;
-  }
+		// Timer B
+		let timerBUpButton = document.getElementById('up-B') as HTMLButtonElement;
+		timerBUpButton.onclick = () => {
+			chess.timer.millisB += 10000;
+			DOMHandler.updateTimerTextes(chess);
+		};
 
-  // *** UTILITIES *** //
+		let timerBDownButton = document.getElementById('down-B') as HTMLButtonElement;
+		timerBDownButton.onclick = () => {
+			chess.timer.millisB -= 10000;
+			DOMHandler.updateTimerTextes(chess);
+		};
 
-  public static updateTimerTextes(chess: Chess) {
-    DOMHandler._timerASpan.innerText = chess.timer.timeA();
-    DOMHandler._timerBSpan.innerText = chess.timer.timeB();
-  }
+		// Timer button
+		DOMHandler._timerButton = document.getElementById('start-timer') as HTMLButtonElement;
+		DOMHandler._timerButton.onclick = () => {
+			chess.timer.start();
+		};
+	}
+
+	public static update(chess: Chess) {
+		DOMHandler._turnText.textContent = chess.turn.toString();
+
+		DOMHandler._whiteScore.textContent = chess.whiteScore.toString();
+		DOMHandler._blackScore.textContent = chess.blackScore.toString();
+
+		// White pieces
+		let whitePiecesHTML = '';
+		chess.piecesEatenByWhite.forEach((piece) => {
+			console.log('Adding: ' + piece.toString());
+			let icon = '<i class="fa-solid fa-chess-' + piece.type.toLowerCase() + '"></i>';
+			whitePiecesHTML += icon;
+		});
+		DOMHandler._whitePiecesBox.innerHTML = whitePiecesHTML;
+
+		// White pieces
+		let blackPiecesHTML = '';
+		chess.piecesEatenByBlack.forEach((piece) => {
+			console.log('Adding: ' + piece.toString());
+			let icon = '<i class="fa-regular fa-chess-' + piece.type.toLowerCase() + '"></i>';
+			blackPiecesHTML += icon;
+		});
+		DOMHandler._blackPiecesBox.innerHTML = blackPiecesHTML;
+	}
+
+	// *** GETTERS *** //
+
+	public static get opponentSelector() {
+		return DOMHandler._opponentSelect;
+	}
+
+	// *** UTILITIES *** //
+
+	public static updateTimerTextes(chess: Chess) {
+		DOMHandler._timerASpan.innerText = chess.timer.timeA();
+		DOMHandler._timerBSpan.innerText = chess.timer.timeB();
+	}
 }

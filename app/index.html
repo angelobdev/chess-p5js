@@ -1,104 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Chess!</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <script
-      src="https://kit.fontawesome.com/09bd532972.js"
-      crossorigin="anonymous"
-    ></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  </head>
-  <body>
-    <header>
-      <h1>Chess! <i class="fa-solid fa-chess"></i></h1>
-    </header>
-    <div class="wrapper">
-      <!-- Chess Game -->
-      <div id="chess" class="container main"></div>
-      <aside class="aside">
-        <!-- #region Timer -->
-        <div class="container panel">
-          <h1>Timer</h1>
+	<head>
+		<title>Chess!</title>
+		<link rel="icon" type="image/x-icon" href="favicon.ico" />
+		<script src="https://kit.fontawesome.com/09bd532972.js" crossorigin="anonymous"></script>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	</head>
+	<body>
+		<header>
+			<h1>Chess! <i class="fa-solid fa-chess"></i></h1>
+		</header>
+		<div class="wrapper">
+			<!-- Chess Game -->
+			<div id="chess" class="container main"></div>
+			<aside class="aside">
+				<!-- #region Timer -->
+				<div class="container panel">
+					<h1>Timer</h1>
 
-          <div class="clocks">
-            <div class="clock player">
-              <button class="clock-button up" id="up-A">
-                <i class="fa-solid fa-arrow-up"></i>
-              </button>
-              <span class="time" id="player-timer">05:00</span>
-              <button class="clock-button down" id="down-A">
-                <i class="fa-solid fa-arrow-down"></i>
-              </button>
-            </div>
-            <p>vs</p>
-            <div class="clock opponent">
-              <button class="clock-button up" id="up-B">
-                <i class="fa-solid fa-arrow-up"></i>
-              </button>
-              <span class="time" id="opponent-timer">05:00</span>
-              <button class="clock-button down" id="down-B">
-                <i class="fa-solid fa-arrow-down"></i>
-              </button>
-            </div>
-          </div>
-          <div class="buttons">
-            <button id="start-timer" class="button">
-              <i class="fa-solid fa-play"></i>
-            </button>
-          </div>
-          <hr class="solid" />
-          <p class="note">Timers will switch automatically</p>
-        </div>
-        <!-- #endregion -->
-        <!-- #region Summary -->
-        <div class="container panel">
-          <h1>Round Summary</h1>
-          <span>
-            Opponent:
-            <select id="opponent-chooser" name="opponent">
-              <option value="second-player">Second Player</option>
-              <option value="random-AI">Random AI</option>
-            </select>
-          </span>
-          <hr class="rounded" />
-          <span>
-            Turn:
-            <p id="turn">White</p>
-          </span>
-          <span
-            >White Score:
-            <p id="white-score">0</p></span
-          >
-          <span
-            >Black Score:
-            <p id="black-score">0</p></span
-          >
-          <div class="buttons">
-            <button id="restart" class="button">
-              <i class="fa-solid fa-rotate-right"></i>
-            </button>
-          </div>
-        </div>
-        <!-- #endregion -->
-      </aside>
-    </div>
-    <footer>
-      <div class="left">
-        <h3>Credits:</h3>
-        <span>Icons: <a>Fontawesome</a></span>
-        <span
-          >Favicon
-          <a href="https://www.flaticon.com/free-icons/chess">Flaticon</a></span
-        >
-      </div>
-      <div class="right">
-        <h3>Powered by:</h3>
-        <span>angelobdev</span>
-        <span>antoniooodev</span>
-      </div>
-    </footer>
-  </body>
+					<div class="clocks">
+						<div class="clock player">
+							<button class="clock-button up" id="up-A">
+								<i class="fa-solid fa-arrow-up"></i>
+							</button>
+							<span class="time" id="player-timer">05:00</span>
+							<button class="clock-button down" id="down-A">
+								<i class="fa-solid fa-arrow-down"></i>
+							</button>
+						</div>
+						<p>vs</p>
+						<div class="clock opponent">
+							<button class="clock-button up" id="up-B">
+								<i class="fa-solid fa-arrow-up"></i>
+							</button>
+							<span class="time" id="opponent-timer">05:00</span>
+							<button class="clock-button down" id="down-B">
+								<i class="fa-solid fa-arrow-down"></i>
+							</button>
+						</div>
+					</div>
+					<div class="buttons">
+						<button id="start-timer" class="button">
+							<i class="fa-solid fa-play"></i>
+						</button>
+					</div>
+					<hr class="solid" />
+					<p class="note">Timers will switch automatically</p>
+				</div>
+				<!-- #endregion -->
+				<!-- #region Summary -->
+				<div class="container panel">
+					<h1>Round Summary</h1>
+					<span>
+						Opponent:
+						<select id="opponent-chooser" name="opponent">
+							<option value="second-player">Second Player</option>
+							<option value="random-AI">Random AI</option>
+						</select>
+					</span>
+					<hr class="rounded" />
+					<span>
+						Turn:
+						<p id="turn">White</p>
+					</span>
+
+					<hr class="rounded" />
+
+					<div class="scores">
+						<!-- WHITE SCORE -->
+						<div class="score white">
+							<div class="head">
+								<h4>White</h4>
+								<h4 id="white-score">0</h4>
+							</div>
+							<div id="white-pieces" class="pieces">
+								<!-- <i class="fa-solid fa-chess-pawn"></i> -->
+							</div>
+						</div>
+
+						<!-- BLACK SCORE -->
+						<div class="score black">
+							<div class="head">
+								<h4 id="black-score">0</h4>
+								<h4>Black</h4>
+							</div>
+							<div id="black-pieces" class="pieces">
+								<!-- <i class="fa-regular fa-chess-pawn"></i> -->
+							</div>
+						</div>
+					</div>
+					<div class="buttons">
+						<button id="restart" class="button">
+							<i class="fa-solid fa-rotate-right"></i>
+						</button>
+					</div>
+				</div>
+				<!-- #endregion -->
+			</aside>
+		</div>
+		<footer>
+			<div class="left">
+				<h3>Credits:</h3>
+				<span>Icons: <a>Fontawesome</a></span>
+				<span>Favicon <a href="https://www.flaticon.com/free-icons/chess">Flaticon</a></span>
+			</div>
+			<div class="right">
+				<h3>Powered by:</h3>
+				<span>angelobdev</span>
+				<span>antoniooodev</span>
+			</div>
+		</footer>
+	</body>
 </html>
