@@ -8,7 +8,6 @@ If you want to collaborate to the project please refer to this list.
 
 - Winning recognition
 - Pinned pieces
-- Castling
 - Full FEN parser
 
 ## Bugs

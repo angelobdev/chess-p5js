@@ -5,10 +5,11 @@ import Chess from "./core/chess";
 import ChessState from "./static/chess.state";
 import DOMHandler from "./static/dom.handler";
 
-const canvasID = "display";
-
 export const sketch = (p: p5) => {
   // *** Sketch Variables *** //
+
+  // Canvas options
+  let canvasID = "display";
 
   // Main Chess Object
   let chess: Chess;
@@ -22,9 +23,11 @@ export const sketch = (p: p5) => {
 
   p.setup = () => {
     // Creating Canvas
-    p.createCanvas(ChessState.BOARD_DIMENSION, ChessState.BOARD_DIMENSION).id(
-      canvasID
+    let canvas = p.createCanvas(
+      ChessState.BOARD_DIMENSION,
+      ChessState.BOARD_DIMENSION
     );
+    canvas.id(canvasID);
     p.windowResized();
 
     // Starting the game
@@ -55,6 +58,7 @@ export const sketch = (p: p5) => {
         let rank = getCursorRank();
 
         if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+          // Trying to pick the piece in the selected spot
           chess.pickCallback(file, rank);
 
           dragOffsetX = file * ChessState.TILE_DIMENSION - p.mouseX;
@@ -72,6 +76,8 @@ export const sketch = (p: p5) => {
   p.mouseDragged = (event: Event) => {
     if (event.target === document.getElementById(canvasID)) {
       // console.log("Mouse dragged at %1.2f, %1.2f", p.mouseX, p.mouseY);
+
+      // Trying to drag the piece in the selected spot
       chess.dragCallback(p.mouseX, p.mouseY, dragOffsetX, dragOffsetY);
 
       // Preventing scroll
@@ -81,7 +87,7 @@ export const sketch = (p: p5) => {
 
   p.mouseReleased = (event: Event) => {
     if (event.target === document.getElementById(canvasID)) {
-      // Trying to move
+      // Trying to move the piece in the selected spot
       chess.releaseCallback(getCursorFile(), getCursorRank());
 
       // Updating DOM elements
