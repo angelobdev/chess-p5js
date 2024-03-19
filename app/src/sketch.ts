@@ -1,9 +1,9 @@
 import p5 from "p5";
+import DOMHandler from "./static/dom.handler";
 import IChessAI from "./algorithms/chess.ai";
 import RandomChessAI from "./algorithms/random.chess.ai";
 import Chess from "./core/chess";
 import ChessState from "./static/chess.state";
-import DOMHandler from "./static/dom.handler";
 
 const canvasID = "display";
 
