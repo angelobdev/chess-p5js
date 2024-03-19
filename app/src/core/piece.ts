@@ -255,7 +255,7 @@ export default class Piece {
       case "q":
         return 9;
       case "k":
-        return 1000;
+        return 90;
       default:
         throw new Error("Invalid symbol: " + symbol);
     }

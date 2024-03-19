@@ -42,11 +42,11 @@ export default class ChessTimer {
   // Getters and setters
 
   public set millisA(millis: number) {
-    this._playerTimerA.millis = millis;
+    if (!this.isStarted) this._playerTimerA.millis = millis;
   }
 
   public set millisB(millis: number) {
-    this._playerTimerB.millis = millis;
+    if (!this.isStarted) this._playerTimerB.millis = millis;
   }
 
   public get millisA() {

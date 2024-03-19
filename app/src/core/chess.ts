@@ -79,6 +79,28 @@ export default class Chess {
     if (this._selectedPiece != null) {
       this._selectedPiece.renderFree(this._dragX, this._dragY);
     }
+
+    // Rendering file letters
+    Chess.p.textSize(Chess.p.width / 30);
+
+    for (let file = 0; file < ChessState.FILES_RANKS; file++) {
+      Chess.p.fill(0);
+      Chess.p.text(
+        String.fromCharCode(97 + file),
+        (file + 0.85) * ChessState.TILE_DIMENSION,
+        ChessState.BOARD_DIMENSION * 0.99
+      );
+    }
+
+    // Rendering rank numbers
+    for (let rank = 0; rank < ChessState.FILES_RANKS; rank++) {
+      Chess.p.fill(0);
+      Chess.p.text(
+        8 - rank,
+        0.1 * ChessState.TILE_DIMENSION,
+        (rank + 0.3) * ChessState.TILE_DIMENSION
+      );
+    }
   }
 
   /**

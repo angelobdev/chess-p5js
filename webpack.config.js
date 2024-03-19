@@ -25,7 +25,7 @@ module.exports = {
         use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
-        test: /\.(png|gif|jpg|jpeg|svg|xml)$/,
+        test: /\.(png|gif|jpg|jpeg|svg|xml|ico)$/,
         use: ["url-loader"],
       },
     ],
@@ -42,6 +42,10 @@ module.exports = {
         {
           from: "app/assets/**/*",
           to: "assets/[name][ext]",
+        },
+        {
+          from: "app/favicon.ico",
+          to: "favicon.ico",
         },
       ],
     }),
