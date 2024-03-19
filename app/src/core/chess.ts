@@ -133,17 +133,17 @@ export default class Chess {
 
   public tryMove(piece: Piece, file: number, rank: number) {
     let pieceAtReleaseSpot = this.getPieceAt(file, rank);
-
+  
     if (
       pieceAtReleaseSpot != null &&
       pieceAtReleaseSpot != piece &&
       piece.canMoveTo(file, rank)
     ) {
       // Moving into a non-empty spot (Eating)
-      this._pieces = this._pieces.filter((piece) => {
-        return piece != pieceAtReleaseSpot;
+      this._pieces = this._pieces.filter((p) => {
+        return p != pieceAtReleaseSpot;
       });
-
+  
       // Eating
       if (piece.color === PieceColor.WHITE) {
         this._piecesEatenByWhite.push(pieceAtReleaseSpot);
@@ -151,14 +151,18 @@ export default class Chess {
         this._piecesEatenByBlack.push(pieceAtReleaseSpot);
       }
     }
-
+  
     // Trying to perform the move
-    if (piece.moveTo(file, rank)) {
+    if (piece.moveTo(this, file, rank)) { // Passa un'istanza di Chess come primo parametro
       this._turn =
         this._turn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-
+  
       this.timer.switch();
     }
+  }  
+
+  public set selectedPiece(piece: Piece | null) {
+    this._selectedPiece = piece;
   }
 
   // *** GETTERS *** //
@@ -199,6 +203,10 @@ export default class Chess {
       if (piece.isPlacedAt(file, rank)) return piece;
     }
     return null;
+  }
+
+  public get selectedPiece(): Piece | null {
+    return this._selectedPiece;
   }
 
   // *** UTILITIES *** //
@@ -243,5 +251,57 @@ export default class Chess {
         this._turn = PieceColor.WHITE; // TODO: implement into parser
       }
     }
+  }
+
+  public tryCastle(king: Piece, rook: Piece, targetFile: number, targetRank: number): boolean {
+    // Check if the king and rook are in their initial positions
+    if (!king.hasMoved && !rook.hasMoved) {
+        // Determine the direction of the castling (castle to right or left)
+        let direction = targetFile > king.file ? 1 : -1;
+
+        // Check if there are no pieces between the king and the rook
+        let intermediateFiles = direction === 1 ? [king.file + 1, king.file + 2] : [king.file - 1, king.file - 2];
+        for (let file of intermediateFiles) {
+            if (this.getPieceAt(file, king.rank)) {
+                return false; // Castle is invalid if there is a piece in the path
+            }
+        }
+
+        // Check if the king is under check or crosses a square under attack
+        let squaresToCheck = direction === 1 ? [king.file, king.file + 1, king.file + 2] : [king.file - 2, king.file - 1, king.file];
+        for (let file of squaresToCheck) {
+            if (this.isSquareUnderAttack(file, king.rank, king.color)) {
+                return false; // Castle is invalid if the king is under check or crosses a square under attack
+            }
+        }
+
+        // Determine the final file for the king and rook
+        let finalKingFile = king.file + (2 * direction); // Move the king two squares towards the rook
+        let finalRookFile = targetFile - direction; // Move the rook next to the king
+
+        // Move the king and rook
+        king.setPosition(finalKingFile, targetRank);
+        rook.setPosition(finalRookFile, targetRank);
+
+        return true; // Successful castle
+    }
+
+    return false; // Castle is invalid if the king or rook has already moved
+  }
+
+  public isSquareUnderAttack(file: number, rank: number, color: PieceColor): boolean {
+    // Iterate through all opponent's pieces and check if they can move to the square
+    // or if the square is within the attack range of an opponent's piece
+    for (let piece of this.pieces) {
+      if (piece.color !== color) {
+        let possibleMoves = piece.getPossibleMoves(this);
+        for (let move of possibleMoves) {
+          if (move.toFile === file && move.toRank === rank) {
+            return true; // Square is under attack
+          }
+        }
+      }
+    }
+    return false; // Is not under attack
   }
 }

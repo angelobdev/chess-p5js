@@ -2,7 +2,7 @@ import p5 from "p5";
 import IChessAI from "./algorithms/chess.ai";
 import RandomChessAI from "./algorithms/random.chess.ai";
 import Chess from "./core/chess";
-import { PieceColor } from "./core/piece";
+import { PieceColor, PieceType } from "./core/piece";
 import ChessState from "./util/chess.state";
 
 const canvasID = "display";
@@ -107,18 +107,38 @@ export const sketch = (p: p5) => {
 
   p.mouseReleased = (event: Event) => {
     if (event.target === document.getElementById(canvasID)) {
-      // console.log("Mouse released at %1.2f, %1.2f", p.mouseX, p.mouseY);
-
       let file = Math.floor((p.mouseX / p.width) * ChessState.FILES_RANKS);
       let rank = Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS);
+  
+      if (chess.selectedPiece && chess.selectedPiece.type === PieceType.KING) {
+        // If the selected piece is a king, check if the move is an attempted castling
+        const kingFile = chess.selectedPiece.file;
+        const targetFile = file;
+  
+        // Check if the player is trying to castle
+        if (Math.abs(targetFile - kingFile) === 2) {
+          // Determine the rook's file based on the direction of the castling
+          const rookFile = targetFile > kingFile ? 7 : 0;
+          const rook = chess.getPieceAt(rookFile, rank);
+  
+          // Try to perform the castling
+          if (chess.tryCastle(chess.selectedPiece, rook, targetFile, rank)) {
+            // Successful castling
+            chess.selectedPiece.selected = false;
+            chess.selectedPiece = null;
+            updateHTMLElements();
+            return;
+          }
+        }
+      }
+  
+      // If it's not a castling move, proceed with the regular move
       chess.release(file, rank);
-
       updateHTMLElements();
-
       // Preventing scroll
       event.preventDefault();
     }
-  };
+  };  
 
   p.windowResized = (event) => {
     if (innerWidth > 1600) {
