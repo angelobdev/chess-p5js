@@ -282,9 +282,13 @@ export default class Chess {
         let direction = targetFile > king.file ? 1 : -1;
 
         // Check if there are no pieces between the king and the rook
-        let intermediateFiles = direction === 1 ? [king.file + 1, king.file + 2] : [king.file - 1, king.file - 2];
-        for (let file of intermediateFiles) {
-            if (this.getPieceAt(file, king.rank)) {
+        let step = direction === 1 ? 1 : -1;
+        if (step === 1) {
+            if (this.getPieceAt(king.file + 1, king.rank) || this.getPieceAt(king.file + 2, king.rank)) {
+                return false; // Castle is invalid if there is a piece in the path
+            }
+        } else {
+            if (this.getPieceAt(king.file - 1, king.rank) || this.getPieceAt(king.file - 2, king.rank) || this.getPieceAt(king.file - 3, king.rank)) {
                 return false; // Castle is invalid if there is a piece in the path
             }
         }
@@ -304,10 +308,10 @@ export default class Chess {
         // Move the king and rook
         king.setPosition(finalKingFile, targetRank);
         rook.setPosition(finalRookFile, targetRank);
-
+    
         return true; // Successful castle
     }
-
+  
     return false; // Castle is invalid if the king or rook has already moved
   }
 
