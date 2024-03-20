@@ -31,7 +31,7 @@ export function calculatePossibleMoves(chess: Chess, piece: Piece): Move[] {
 	}
 
 	// Helper function to check if castling is possible
-	function isCastlingPossible(king: Piece, rook: Piece, targetFile: number, targetRank: number): boolean {
+	function isCastlingPossible(king: Piece, rook: Piece, targetFile: number, _targetRank: number): boolean {
 		// Check if the king and rook are in their initial positions
 		if (!king.hasMoved && !rook.hasMoved) {
 			// Determine the direction of the castling (castle to right or left)
