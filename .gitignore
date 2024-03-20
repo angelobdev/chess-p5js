@@ -1,4 +1,8 @@
+# Files
 .DS_Store
+bun.lockb
+
+# Folders
 .vscode/
 node_modules/
 dist/
