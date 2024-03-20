@@ -6,7 +6,7 @@ import ChessState from './static/chess.state';
 import DOMHandler from './static/dom.handler';
 
 // SCSS
-import '../styles/main.scss';
+import '../public/styles/main.scss';
 
 export const sketch = (p: p5) => {
 	// *** Sketch Variables *** //
@@ -16,7 +16,7 @@ export const sketch = (p: p5) => {
 
 	// Main Chess Object
 	let chess: Chess;
-	let chessAI: IChessAI;
+	let chessAI: IChessAI | null;
 
 	// Mouse offset to render selected piece relative to where it has been picked
 	let dragOffsetX: number;
@@ -98,7 +98,7 @@ export const sketch = (p: p5) => {
 		}
 	};
 
-	p.windowResized = (event) => {
+	p.windowResized = (_event) => {
 		if (innerWidth > 1600) {
 			ChessState.windowResizeCallback(innerWidth * 0.42);
 		} else if (innerWidth > 900) {
@@ -155,4 +155,4 @@ export const sketch = (p: p5) => {
 };
 
 // Starting P5 Sketch
-new p5(sketch, document.getElementById('chess'));
+new p5(sketch, document.getElementById('chess')!);
