@@ -1,4 +1,5 @@
-import Chess from 'core/chess';
+import Chess from '../core/chess';
+import Piece from '../core/piece';
 
 export default class DOMHandler {
 	// Round summary
@@ -97,7 +98,7 @@ export default class DOMHandler {
 
 		// White pieces
 		let whitePiecesHTML = '';
-		chess.piecesEatenByWhite.forEach((piece) => {
+		chess.piecesEatenByWhite.forEach((piece: Piece) => {
 			console.log('Adding: ' + piece.toString());
 			let icon = '<i class="fa-solid fa-chess-' + piece.type.toLowerCase() + '"></i>';
 			whitePiecesHTML += icon;

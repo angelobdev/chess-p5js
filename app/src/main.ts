@@ -5,6 +5,9 @@ import Chess from './core/chess';
 import ChessState from './static/chess.state';
 import DOMHandler from './static/dom.handler';
 
+// SCSS
+import '../styles/main.scss';
+
 export const sketch = (p: p5) => {
 	// *** Sketch Variables *** //
 
@@ -150,3 +153,6 @@ export const sketch = (p: p5) => {
 		return Math.floor((p.mouseY / p.width) * ChessState.FILES_RANKS_COUNT);
 	}
 };
+
+// Starting P5 Sketch
+new p5(sketch, document.getElementById('chess'));
