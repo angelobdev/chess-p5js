@@ -177,3 +177,4 @@ dist
 # Project
 .vscode/
 bun.lockb
+package-lock.json
